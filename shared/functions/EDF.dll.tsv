@@ -143,6 +143,7 @@ steam-17055427	0x010AB600	BVM_ExecuteInstruction		likely	reverse engineered: edf
 steam-17055427	0x0111B420	Renderer_InitDevice		likely	edf6-all-forces docs/frame-pacing-re.md: 唯一调用者 0x011A33DF，经 0x012DAED0 建 D3D11 设备，设备存 renderer+0x80	
 steam-17055427	0x0111CC20	Renderer_WaitGpuFence		likely	edf6-all-forces docs/frame-pacing-re.md: 建事件、录一条 signal 命令，再用 0x00050E00 轮询 + Sleep(0) 忙等	超过 1 s 时顺带处理窗口消息
 steam-17055427	0x0111D890	Renderer_QueuePresent		likely	edf6-all-forces docs/unlimited-fps-re.md: 唯一调用者 0x011A309B，dl = SyncInterval；渲染线程 0x01118B45 调 Present(dl, 0)	
+steam-17055427	0x01121F70	Renderer_CreateTexture2DWithViews		likely	edf6-all-forces docs/scope-pip-re.md §5.4: 第 3 参的 D3D11_TEXTURE2D_DESC 原样交给 ID3D11Device::CreateTexture2D，再按 BindFlags 的 SHADER_RESOURCE / RENDER_TARGET / UNORDERED_ACCESS 位各建对应视图	0x011997A0 用它建视口的 G-buffer 与颜色目标
 steam-17055427	0x01182A00	ActionSource_Set		likely	edf6-all-forces docs/unlimited-fps-re.md: 写动作源 +0x48 值 / +0x4C 按住；0x01188738 / 0x01188756 写鼠标 X / Y	
 steam-17055427	0x01182BC0	ActionWrapper_Update		likely	edf6-all-forces docs/unlimited-fps-re.md: 清 +0x11/+0x12/+0x13 边沿后按源的变化重设，长按重复倒数减 n；全 EDF.dll 154 处调用	
 steam-17055427	0x011831F0	Input_TakeMouseDelta		likely	edf6-all-forces docs/unlimited-fps-re.md: 0x01188479 调用，dl=1 时拷出 0x01FEEE20 的 16 字节并重置为 0x01765B30	
@@ -152,6 +153,7 @@ steam-17055427	0x0118AFC0	SceneCamera_ctor		likely	edf6-all-forces docs/zoom-re.
 steam-17055427	0x0118DFF0	SceneCamera_BuildProjection		likely	edf6-all-forces docs/zoom-re.md: 读 cam+0x24 写 cam+0x1A0	
 steam-17055427	0x011945E0	Scene_CreateObject		confirmed	edf6-all-forces docs/airstrike-re.md: CreateObject(g,xf,sgo,InitParam)，多处调用点核对；decoy-blast-re.md 同	
 steam-17055427	0x01198DA0	System_Update		likely	edf6-all-forces docs/frame-pacing-re.md: 0x00705715 调用，[System+0xCE4]+=n/60	
+steam-17055427	0x011997A0	System_Viewport_BuildTargets		likely	edf6-all-forces docs/scope-pip-re.md §4.1 / §5.4: 视口槽没有相机时不建；矩形或尺寸变了就重建；3 张 G-buffer 与 +0xD0 / +0xF0 颜色用同一份描述（R16G16B16A16_FLOAT，BindFlags 0xA8），深度另用 0x48	颜色目标可以直接当 SRV 采样
 steam-17055427	0x011A7EE0	Havok_CastRay		likely	edf6-all-forces docs/raycast-re.md: GetGroundPosition 在 0x002088AA 调用	
 steam-17055427	0x011AD220	Havok_World_GetBodyShared		likely	edf6-all-forces docs/gravity-re.md: 同 GetBody 并 lock weak，失败抛 bad_weak_ptr	
 steam-17055427	0x011AD2E0	Havok_World_GetBody		likely	edf6-all-forces docs/gravity-re.md: 先调 isBodyValid 再取属性 key 0x8001；bullet-pass-re.md 同	返回裸指针
