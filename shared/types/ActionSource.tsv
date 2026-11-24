@@ -1,0 +1,4 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x0048	4	value	float	likely	edf6-all-forces docs/unlimited-fps-re.md: 0x01182A00 写入	
+steam-17055427	0x004C	1	held	bool	likely	edf6-all-forces docs/unlimited-fps-re.md: 0x01182A00 写入	
+steam-17055427	0x004D	1	disabled	bool	guess	edf6-all-forces docs/unlimited-fps-re.md: 0x01182BC0 读到置位时不更新封装	

@@ -1,0 +1,8 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x0000	8	source	ActionSource*	likely	edf6-all-forces docs/unlimited-fps-re.md: 0x01182BC0 从这里读源	
+steam-17055427	0x0008	4	repeat_countdown	int	likely	edf6-all-forces docs/unlimited-fps-re.md: 按下时置 0x10，之后每次减 n，到 0 置 2 并给重复脉冲	
+steam-17055427	0x000C	4	value	float	likely	edf6-all-forces docs/unlimited-fps-re.md: 拷自源 +0x48	
+steam-17055427	0x0010	1	held	bool	likely	edf6-all-forces docs/unlimited-fps-re.md: 当前是否按住	
+steam-17055427	0x0011	1	pressed	bool	likely	edf6-all-forces docs/unlimited-fps-re.md: 按下边沿，0x01182BC0 每次先清	
+steam-17055427	0x0012	1	released	bool	likely	edf6-all-forces docs/unlimited-fps-re.md: 松开边沿	
+steam-17055427	0x0013	1	repeat_pulse	bool	likely	edf6-all-forces docs/unlimited-fps-re.md: 长按重复脉冲	
