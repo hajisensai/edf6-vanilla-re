@@ -1,0 +1,35 @@
+build	rva	name	type	confidence	evidence	notes
+steam-17055427	0x01762068	InitParamBase::vftable	vtable	likely	edf6-all-forces docs/airstrike-re.md: InitParamBase{vt 0x01762068}	
+steam-17055427	0x01765A20	kPiOver4	float	likely	edf6-all-forces docs/zoom-re.md: 常量 π/4	
+steam-17055427	0x01768C10	CharacterGhostCamera::vftable	vtable	confirmed	edf6-all-forces docs/zoom-re.md: 关键 RVA 表	
+steam-17055427	0x017A6C18	DropItemManager_Unit_vftable	vtable	confirmed	edf6-all-forces docs/itembox-re.md: Unit vtable	
+steam-17055427	0x017C4030	AnimationModel::vftable	vtable	confirmed	edf6-all-forces docs/fp-render-re.md: AnimationModel vtable	武器模型即此类
+steam-17055427	0x017C4920	HumanoidWeapon_Basic_vftable	vtable	confirmed	edf6-all-forces docs/gravity-re.md: 构造函数 0x004A52D0 写入	
+steam-17055427	0x017C4B50	HumanoidWeapon_Heavy_vftable	vtable	confirmed	edf6-all-forces docs/gravity-re.md: 构造函数 0x004A5C20 写入	
+steam-17055427	0x017D8FA0	Vehicle403_Tank_vftable	vtable	confirmed	edf6-all-forces docs/stock-payload-re.md: 403 坦克 vtable	
+steam-17055427	0x017D9458	Vehicle404_Titan_vftable	vtable	confirmed	edf6-all-forces docs/stock-payload-re.md: 404 Titan vtable	
+steam-17055427	0x017D9868	VehicleBase::RideInfo::vftable	vtable	confirmed	edf6-all-forces docs/vehiclefps-0.1.66-re.md: RTTI RideInfo@VehicleBase	座位对象，seat+8 指回载具
+steam-17055427	0x017DA508	Vehicle503_Bike_vftable	vtable	confirmed	edf6-all-forces docs/stock-payload-re.md: 503 摩托 vtable	
+steam-17055427	0x017DB238	Vehicle506_Helicopter_vftable	vtable	confirmed	edf6-all-forces docs/heli-input-re.md: vtable 表	
+steam-17055427	0x017DC620	Vehicle603_AntiAir_vftable	vtable	confirmed	edf6-all-forces docs/stock-payload-re.md: 603 防空车 vtable	
+steam-17055427	0x017DEF98	Vehicle409_Helicopter_vftable	vtable	confirmed	edf6-all-forces docs/stock-payload-re.md: 409 直升机 vtable	
+steam-17055427	0x017DF790	VehicleHelicopterBase::vftable	vtable	confirmed	edf6-all-forces docs/heli-input-re.md: vtable 表；aircraft-re.md 同	第 57 槽=0x006519A0
+steam-17055427	0x017E89E8	sandlot_custom::hknpFlipBackfaceCollisionModifier::vftable	vtable	confirmed	edf6-all-forces docs/havok-mt-re.md: RTTI sandlot_custom::hknpFlipBackfaceCollisionModifier	
+steam-17055427	0x017E91E0	Application_vftable_OnWorldStepBegin_slot	code pointer	likely	edf6-all-forces docs/mission-cycle-re.md: Application vtable 槽，指向 0x00705A60	是 vtable 中的一个槽，不是表头
+steam-17055427	0x017FC970	HUiHudDamage::vftable	vtable	confirmed	edf6-all-forces docs/vehiclefps-0.1.66-re.md: 类名 HUiHudDamage	
+steam-17055427	0x018BC9C0	hknpWorld::vftable	vtable	confirmed	edf6-all-forces docs/raycast-re.md: RTTI .?AVhknpWorld@@	castRay=第 54 槽
+steam-17055427	0x018C1A28	hknpMultithreadedSimulation::vftable	vtable	confirmed	edf6-all-forces docs/havok-mt-re.md: world+0x4C8 模拟对象的 vtable	
+steam-17055427	0x020B2880	g_FileSystemManager	void*	likely	edf6-all-forces docs/havok-props-re.md: 应用初始化写入的全局之一	
+steam-17055427	0x020B2890	g_GameDataMgr	GameStatus*	confirmed	edf6-all-forces docs/loadout-re.md: 0x00595CA4 mov rax,[rip] 解析到此；mission-list-re.md 同	
+steam-17055427	0x020B28A8	g_MissionMgr	MissionMgr*	confirmed	edf6-all-forces docs/mission-cycle-re.md: RTTI MissionMgr	
+steam-17055427	0x020B2958	g_SceneManager	void*	likely	edf6-all-forces docs/airstrike-re.md: CreateObject 的第一参 g=*(img+0x020B2958)	名字按用途取
+steam-17055427	0x020B2978	g_TeamManager	void*	likely	edf6-all-forces docs/airstrike-re.md: SetTeam 登记到此	名字按用途取
+steam-17055427	0x020B2988	g_DropItemManager	DropItemManager*	confirmed	edf6-all-forces docs/itembox-re.md: 0x00701586 写入，0x007004F0 new 0xE60	
+steam-17055427	0x020B2998	g_MoveArea	void*	likely	edf6-all-forces docs/map-edge-re.md: 存对象地址+8，读取方先减 8	名字按用途取
+steam-17055427	0x020B29A8	g_ResourceManager	void*	likely	edf6-all-forces docs/decoy-blast-re.md: 0x007A3780 的第一参	名字按用途取
+steam-17055427	0x020B29C8	g_TalkManager	void*	likely	edf6-all-forces docs/mission-list-re.md: 任务脚本初始化时写对话进度系数	
+steam-17055427	0x020B30A0	g_HavokTaskHolder	void*	likely	edf6-all-forces docs/havok-mt-re.md: [G+8]=pool，[G+0x20]=queue	
+steam-17055427	0x020B30E0	g_RagdollManager	void*	likely	edf6-all-forces docs/gravity-re.md: 0x006EED10 登记 ragdoll，容量 256/512	
+steam-17055427	0x021360A8	g_MainWindowHwnd	HWND	likely	edf6-all-forces docs/vehiclefps-0.1.66-re.md: 主窗口 HWND	
+steam-17055427	0x021360B0	g_SubWindowHwnd	HWND	likely	edf6-all-forces docs/vehiclefps-0.1.66-re.md: 副窗口 HWND	
+steam-17055427	0x02139A78	g_HudDrawer	void*	likely	edf6-all-forces docs/hud-re.md: 0x000C2FB0(drawer=*(EDF+0x2139A78),...)	

@@ -1,0 +1,2 @@
+build	rva	name	signature	confidence	evidence	notes
+steam-17055427	0x00001000	LaunchGameThroughCPP_OnBoot		likely	reverse engineered: codes at 0x00001004 and import address table slot 0x00002000	migrated from function-labels.tsv

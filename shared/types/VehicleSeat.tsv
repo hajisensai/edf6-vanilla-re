@@ -1,0 +1,8 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x0030	4	riding_position_mask	u32	likely	edf6-all-forces docs/all-classes-ride-re.md: = vehicle_riding_position[i][4]，0x0062B79C 写	
+steam-17055427	0x0034	4	seat_mask	u32	likely	edf6-all-forces docs/all-classes-ride-re.md: 构造 0x006293A4 写 0xFFFFFFFF	
+steam-17055427	0x02C0	4	stick_LX	float	likely	edf6-all-forces docs/heli-input-re.md: veh+0x1540 = -seat.LX	
+steam-17055427	0x02C4	4	stick_LY	float	likely	edf6-all-forces docs/heli-input-re.md: veh+0x1548 = -seat.LY	
+steam-17055427	0x02D0	4	stick_RX	float	likely	edf6-all-forces docs/heli-input-re.md: veh+0x1550 = -seat.RX	
+steam-17055427	0x02E0	4	trigger_L	float	likely	edf6-all-forces docs/stock-payload-re.md: 0x0065A548 读作油门；直升机的 collective	
+steam-17055427	0x02E4	4	trigger_R	float	likely	edf6-all-forces docs/stock-payload-re.md: >=0.8 触发主炮 0x0065A5A7	

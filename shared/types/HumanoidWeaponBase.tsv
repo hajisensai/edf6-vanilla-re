@@ -1,0 +1,9 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x0060	64	world_matrix	mat4	likely	edf6-all-forces docs/gravity-re.md: 武器对象 4x4 世界矩阵，+0x90 是位置	
+steam-17055427	0x0170	8	bullet_factory	ptr	likely	edf6-all-forces docs/gravity-re.md: bullet_setting[0] 经 0x01195C50 得到	
+steam-17055427	0x0180	0x1E0	init_param	InitParam	likely	edf6-all-forces docs/gravity-re.md: 构造 0x0049D9C0 call 0x001001D0(weapon+0x180)	
+steam-17055427	0x0480	4	pellets_per_shot	int	likely	edf6-all-forces docs/gravity-re.md: fire_setting[0]	
+steam-17055427	0x0484	4	shots_per_burst	int	likely	edf6-all-forces docs/gravity-re.md: fire_setting[2]	
+steam-17055427	0x05B0	8	owner	ptr	likely	edf6-all-forces docs/gravity-re.md: 持有者裸指针	
+steam-17055427	0x0620	8	muzzle_array	ptr	likely	edf6-all-forces docs/gravity-re.md: 每项 0x90，+0x50 处 4x4 世界矩阵	
+steam-17055427	0x0630	4	muzzle_count	int	likely	edf6-all-forces docs/gravity-re.md: 枪口个数	

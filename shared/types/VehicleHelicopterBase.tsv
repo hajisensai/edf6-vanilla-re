@@ -1,0 +1,8 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x1540	4	input_lateral	float	likely	edf6-all-forces docs/heli-input-re.md: -seat.LX，0x00654E84 消费	
+steam-17055427	0x1544	4	input_throttle	float	likely	edf6-all-forces docs/heli-input-re.md: seat+0x2E0，传给 0x00656660	
+steam-17055427	0x1548	4	input_forward	float	likely	edf6-all-forces docs/heli-input-re.md: -seat.LY，0x00654E69	
+steam-17055427	0x154C	4	input_w	float	likely	edf6-all-forces docs/heli-input-re.md: 恒为 1.0	
+steam-17055427	0x1550	4	input_yaw	float	likely	edf6-all-forces docs/heli-input-re.md: -seat.RX，0x00654E48	
+steam-17055427	0x1580	?	sgo_param_block	struct	likely	edf6-all-forces docs/aircraft-re.md: 第 46 槽读 SGO 时 rdi=veh+0x1580	
+steam-17055427	0x1BC8	?	rotor	struct	likely	edf6-all-forces docs/aircraft-re.md: 0x00650D40 填旋翼结构	

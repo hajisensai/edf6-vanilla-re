@@ -1,0 +1,4 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x0000	16	start	float4	likely	edf6-all-forces docs/raycast-re.md: 0x011A7EFD movups xmm5,[r8]	
+steam-17055427	0x0010	16	end	float4	likely	edf6-all-forces docs/raycast-re.md: 0x011A7F04 读	
+steam-17055427	0x0020	4	collisionFilterInfo	u32	likely	edf6-all-forces docs/raycast-re.md: 0x011A7F1E；游戏填 0x16	

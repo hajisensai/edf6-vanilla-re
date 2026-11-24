@@ -1,0 +1,13 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x01B0	8	display_name	wchar_t*	likely	edf6-all-forces docs/stock-payload-re.md: 0x0068CC19 存 0x000551E0 返回值	
+steam-17055427	0x020C	4	ReloadTime	float	likely	edf6-all-forces docs/stock-payload-re.md: 0x0068C9DD 读；<0 不装填	
+steam-17055427	0x022C	4	EnergyChargeRequire	float	likely	edf6-all-forces docs/stock-payload-re.md: 0x0068CA3D 读，0x00693E5F 用	
+steam-17055427	0x0248	4	AmmoCount	int	likely	edf6-all-forces docs/stock-payload-re.md: 读参数 0x0068C55C，装填完成写回 +0xBE8	
+steam-17055427	0x0690	4	SecondaryFire_Type	int	likely	edf6-all-forces docs/zoom-re.md: 0x0068D0A4 加载器写入	
+steam-17055427	0x0698	?	SecondaryFire_Parameter	?	likely	edf6-all-forces docs/zoom-re.md: 0x0068D0D4 加载器写入	
+steam-17055427	0x0780	1	zoom_on	u8	likely	edf6-all-forces docs/zoom-re.md: 0x00696310 翻转	
+steam-17055427	0x0784	4	zoom_factor	float	likely	edf6-all-forces docs/zoom-re.md: 倍率，默认 1.0	
+steam-17055427	0x08B6	1	friendly_fire	u8	likely	edf6-all-forces docs/swarm-team-re.md: 0x00633330 武器重建写 1，开启友伤	
+steam-17055427	0x0BE8	4	ammo_current	int	likely	edf6-all-forces docs/stock-payload-re.md: 当前弹数	
+steam-17055427	0x0E68	4	reload_remaining	int	likely	edf6-all-forces docs/stock-payload-re.md: 0x00693F3B 递减	
+steam-17055427	0x0E7C	4	energy_charge_remaining	float	likely	edf6-all-forces docs/stock-payload-re.md: 能量武器剩余充能	

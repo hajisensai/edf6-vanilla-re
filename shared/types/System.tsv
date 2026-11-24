@@ -1,0 +1,2 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x0CE4	4	time_accum	float	likely	edf6-all-forces docs/frame-pacing-re.md: 未暂停时 += n*(1/60)	

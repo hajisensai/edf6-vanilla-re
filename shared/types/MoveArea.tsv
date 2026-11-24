@@ -1,0 +1,5 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x0010	16	box_min	vec4	likely	edf6-all-forces docs/map-edge-re.md: 盒子最小角	
+steam-17055427	0x0020	16	box_max	vec4	likely	edf6-all-forces docs/map-edge-re.md: 盒子最大角	
+steam-17055427	0x0040	4	y_hard_limit	float	likely	edf6-all-forces docs/map-edge-re.md: Y 硬上限	
+steam-17055427	0x0044	4	ceiling	float	likely	edf6-all-forces docs/map-edge-re.md: 天花板，直升机第 55 槽单独检查	

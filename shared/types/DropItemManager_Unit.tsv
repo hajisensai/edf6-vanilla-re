@@ -1,0 +1,2 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x00C4	1	delete_flag	u8	likely	edf6-all-forces docs/itembox-re.md: y<-1000 时置 1	

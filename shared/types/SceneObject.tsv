@@ -1,0 +1,3 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x0008	8	resource_node	ptr	likely	edf6-all-forces docs/damage-stats-re.md: 基类构造 0x01189D1D 写 obj+0x08	
+steam-17055427	0x0090	16	position	vec4	likely	edf6-all-forces docs/fp-soldier-re.md: 位置 +0x90；hud-re.md 同	

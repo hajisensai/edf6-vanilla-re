@@ -1,0 +1,5 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x0010	16	attacker_weak	weak_ptr	likely	edf6-all-forces docs/damage-numbers-re.md: GDI+0x10 的 weak_ptr，0x005481C9 锁出	
+steam-17055427	0x0030	16	area_center	vec4	likely	edf6-all-forces docs/decoy-blast-re.md: 球查询中心 = GDI+0x30	
+steam-17055427	0x0050	4	damage	float	likely	edf6-all-forces docs/damage-stats-re.md: hp += -GDI+0x50 × ...	
+steam-17055427	0x0058	4	area_radius	float	likely	edf6-all-forces docs/decoy-blast-re.md: 半径取 GDI+0x58	

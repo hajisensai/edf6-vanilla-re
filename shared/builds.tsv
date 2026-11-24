@@ -1,0 +1,3 @@
+build	module	sha256	timedatestamp	image_base	size_of_image	notes
+steam-17055427	EDF.dll	0d5092393a1b9d8f1b75b0c93d8a8f65615a36a92c46e40349c2b66c733d0916	0x678CCB46	0x0000000180000000	0x022CE000	Steam app 2291060 depot build 17055427
+steam-17055427	EDF6.exe	87fadc7dbfb6f50d0f1bfea5b3f51af779aeaa9fa03a90c62a695eb39f1e0989	0x678CCB63	0x0000000140000000	0x00062000	Steam app 2291060 depot build 17055427 launcher

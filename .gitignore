@@ -1,0 +1,7 @@
+out/
+_cache/
+__pycache__/
+*.pyc
+*.sqlite
+*.asm
+/ghidra_*_PUBLIC/

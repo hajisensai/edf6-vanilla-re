@@ -1,0 +1,2 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x0130	8	current_mode_object	ptr	likely	edf6-all-forces docs/mission-list-re.md: 由 LoadPackage 0x000E2AD0 填充	

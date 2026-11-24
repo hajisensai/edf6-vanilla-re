@@ -1,0 +1,165 @@
+build	rva	name	signature	confidence	evidence	notes
+steam-17055427	0x00050BC0	ScopedLock_EnterCriticalSection		likely	edf6-all-forces docs/havok-mt-re.md: EnterCriticalSection 的 scoped lock	名字按功能概括
+steam-17055427	0x000AB2C0	DevCmd_set_armor_count		likely	edf6-all-forces docs/loadout-re.md: 开发者命令处理函数	
+steam-17055427	0x000AC650	DevCmd_set_player_soldier		likely	edf6-all-forces docs/loadout-re.md: 开发者命令处理函数	
+steam-17055427	0x000AC9E0	DevCmd_set_weapon		likely	edf6-all-forces docs/loadout-re.md: 开发者命令处理函数	
+steam-17055427	0x000AF120	DevCmd_unlock_weapon_index		likely	edf6-all-forces docs/loadout-re.md: 开发者命令处理函数	
+steam-17055427	0x000AF150	DevCmd_unlock_weapon		likely	edf6-all-forces docs/loadout-re.md: 开发者命令处理函数	
+steam-17055427	0x000AF330	DevCmd_unlock_weapon_one		likely	edf6-all-forces docs/loadout-re.md: 开发者命令处理函数	
+steam-17055427	0x000D62C0	GameDataMgr_ctor		likely	edf6-all-forces docs/mission-list-re.md: 0x007C0C4A new 0x150A0 后调用	
+steam-17055427	0x000E2AD0	GameDataMgr_LoadPackage		likely	edf6-all-forces docs/mission-list-re.md: 填充 mgr+0x130 当前模式对象	
+steam-17055427	0x000F86A0	CharacterGhostCamera::Update		likely	reverse engineered: edf6-all-forces docs/camera-re.md, virtual slot 4	migrated from function-labels.tsv
+steam-17055427	0x000FB9F0	CharacterGhostCamera::UpdateSeatedView		likely	reverse engineered: edf6-all-forces docs/camera-re.md, state 2	migrated from function-labels.tsv
+steam-17055427	0x000FDF00	RayCollector_Reset		likely	edf6-all-forces docs/raycast-re.md: 射线 collector 复位 earlyOut	
+steam-17055427	0x00108260	Havok_BodyIdToSceneObject		likely	edf6-all-forces docs/gravity-re.md: 内部调 0x011AD2E0 后取属性 key 0	参数是 body id
+steam-17055427	0x001230A0	MapMgr_Update		likely	edf6-all-forces docs/frame-pacing-re.md: 0x007056BA 调用	
+steam-17055427	0x00135170	MapObject_CrashModel_Contact		likely	edf6-all-forces docs/havok-mt-re.md: 接触回调表	
+steam-17055427	0x001351C0	MapDestruction_GlobalEventHandler		likely	edf6-all-forces docs/havok-mt-re.md: 全局事件类型 0x1B，0x00704FFD 经 0x0011C580 订阅	
+steam-17055427	0x001A92C0	mission_script::GlobalFunctions::GlobalFunctions		likely	edf6-all-forces docs/aircraft-re.md: 创建 mission_script::GlobalFunctions，ctx+8=任务对象	
+steam-17055427	0x001B0310	Script_CreateFriend		likely	edf6-all-forces docs/aircraft-re.md: 任务脚本 native 表	
+steam-17055427	0x001B21E0	Script_CreatePlayer		likely	edf6-all-forces docs/loadout-re.md: 任务脚本，mode0 -> 0x001BCC50	
+steam-17055427	0x001B21F0	Script_CreatePlayer_InitWeapon		likely	edf6-all-forces docs/loadout-re.md: 任务脚本，mode2	
+steam-17055427	0x001B2200	Script_CreatePlayer_NoWeapon		likely	edf6-all-forces docs/loadout-re.md: 任务脚本，mode1	
+steam-17055427	0x001B28C0	Script_CreateVehicle2		likely	edf6-all-forces docs/aircraft-re.md: 任务脚本 native 表；调 0x00633280 空投	
+steam-17055427	0x001B8CC0	Script_PreloadPlayerResource		likely	edf6-all-forces docs/loadout-re.md: 任务脚本 PreloadPlayerResource()	
+steam-17055427	0x001BA1B0	Script_SetMoveArea		confirmed	edf6-all-forces docs/map-edge-re.md: 注册点 0x001E838E，声明字符串 0x017956F8	
+steam-17055427	0x001BFA80	Script_Object_Delete		likely	edf6-all-forces docs/aircraft-re.md: lock weak 后调 0x0118A1B0	
+steam-17055427	0x001C3480	Script_SetPosition_string		likely	edf6-all-forces docs/aircraft-re.md: 任务脚本 native 表	
+steam-17055427	0x001CC170	Script_Vehicle_RideAi		likely	edf6-all-forces docs/aircraft-re.md: 任务脚本 native 表	
+steam-17055427	0x001DC450	Mission_CreatePlayer		likely	edf6-all-forces docs/loadout-re.md: 单个玩家创建，离线/联机分流	
+steam-17055427	0x001DD520	ConstructAngelScriptExecutor		likely	reverse engineered: edf6-all-forces docs/mission-script-format-re.md, call 0x001F6CE4	migrated from function-labels.tsv
+steam-17055427	0x001E2BB0	Script_CreateVehicle		likely	edf6-all-forces docs/aircraft-re.md: 以固定 level 调 0x001B28C0	
+steam-17055427	0x001E2BE0	Script_DeleteObject		likely	edf6-all-forces docs/aircraft-re.md: 调用 0x001BFA80	
+steam-17055427	0x001E31F0	RegisterMissionScriptBindings		likely	reverse engineered: AngelScript registration table; caller 0x001DD8BD	migrated from function-labels.tsv
+steam-17055427	0x001F53C0	Script_RideVehicle		likely	edf6-all-forces docs/aircraft-re.md: 任务脚本 native 表	
+steam-17055427	0x001F5D70	Script_SetupVehicle		likely	edf6-all-forces docs/aircraft-re.md: 任务脚本 native 表	
+steam-17055427	0x001F67F0	MissionMgr::End		likely	edf6-all-forces docs/mission-cycle-re.md: mgr+0x54=r，调 impl->vt[3]；类名来自 RTTI MissionMgr	
+steam-17055427	0x001F68B0	MissionMgr::IsRunning		likely	edf6-all-forces docs/mission-cycle-re.md: impl 非空且 vt[6]()!=3	
+steam-17055427	0x001F68D0	SelectMissionScriptExecutor		likely	reverse engineered: edf6-all-forces docs/mission-script-format-re.md, task selector	migrated from function-labels.tsv
+steam-17055427	0x001F6F40	MissionMgr::Update		likely	edf6-all-forces docs/mission-cycle-re.md: 由 0x00705A60 每个世界步调用	
+steam-17055427	0x00208860	Script_GetGroundPosition		likely	edf6-all-forces docs/raycast-re.md: 0x002088AA 取 0x020B2958 后调 0x011A7EE0	任务脚本 native
+steam-17055427	0x0020DC10	ConstructBVMExecutor		likely	reverse engineered: edf6-all-forces docs/mission-script-format-re.md, call 0x001F6C9F	migrated from function-labels.tsv
+steam-17055427	0x0020FF70	MissionScriptBVMImplement::DispatchNative		likely	reverse engineered: BVM dispatcher referenced by the BVM interpreter's adapter	migrated from function-labels.tsv
+steam-17055427	0x002276E0	BVM_CommitStackPointer		likely	reverse engineered: RCX process, RDX new stack pointer; commit at 0x002100C9	migrated from function-labels.tsv
+steam-17055427	0x00228610	Script_SetMoveArea_Alt		confirmed	edf6-all-forces docs/map-edge-re.md: 引用字符串 "SetMoveArea( not found : %ls )"	
+steam-17055427	0x002B5DA0	IndirectFireControl_Start		likely	reverse engineered: edf6-all-forces docs/airstrike-re.md, caller 0x006A8DFB	migrated from function-labels.tsv
+steam-17055427	0x002B87A0	IndirectFireControl_Update		likely	reverse engineered: edf6-all-forces docs/airstrike-re.md, caller 0x006A8EC8	migrated from function-labels.tsv
+steam-17055427	0x002C5B60	ShellCase_RB_Contact		likely	edf6-all-forces docs/havok-mt-re.md: 接触回调表	
+steam-17055427	0x002C68D0	DropItemManager::DropItemManager		likely	edf6-all-forces docs/itembox-re.md: 0x007004F0 new 0xE60 后调用构造	
+steam-17055427	0x002C6FC0	DropItemManager::~DropItemManager		likely	edf6-all-forces docs/itembox-re.md: 关键 RVA 表	
+steam-17055427	0x002C7540	DropItemManager::Apply		likely	edf6-all-forces docs/itembox-re.md: 拾取效果	
+steam-17055427	0x002C7950	DropItemManager::Spawn		likely	edf6-all-forces docs/itembox-re.md: 含联机广播	
+steam-17055427	0x002C7B10	DropItemManager::NetHostClaim		likely	edf6-all-forces docs/itembox-re.md: 房主按编号认领	
+steam-17055427	0x002C7B50	DropItemManager::NetBroadcastConfirm		likely	edf6-all-forces docs/itembox-re.md: 联机广播确认	
+steam-17055427	0x002C7D50	DropItemManager::NetPickupRequest		likely	edf6-all-forces docs/itembox-re.md: 联机拾取请求	
+steam-17055427	0x002C83B0	DropItemManager::UnitInit		likely	edf6-all-forces docs/itembox-re.md: Unit 初始化	
+steam-17055427	0x002C8AC0	DropItemManager::Collect		likely	edf6-all-forces docs/itembox-re.md: 拾取；调用点 0x0059B938	
+steam-17055427	0x002C8C80	DropItemManager::NetHandler		likely	edf6-all-forces docs/itembox-re.md: 消息 0 生成/1 请求/2 确认/3 请求掉落	
+steam-17055427	0x002CA2A0	DropItemManager::Clear		likely	edf6-all-forces docs/itembox-re.md: 关键 RVA 表	
+steam-17055427	0x002CA350	DropItemManager::Update		likely	edf6-all-forces docs/itembox-re.md: 0x007056CB 调用；夹边，y<-1000 删	
+steam-17055427	0x002CA610	DropItemManager::SpawnBoxes		likely	edf6-all-forces docs/itembox-re.md: 实际生成 N 个箱子	
+steam-17055427	0x00328280	DeiroiFootParts_Base_Contact		likely	edf6-all-forces docs/havok-mt-re.md: 接触回调表	
+steam-17055427	0x0033F480	EDF6_BerserkerBase::ReadFloatByTag		likely	RTTI .?AVEDF6_BerserkerBase@@; vtable 0x017AC4B8 slot 46 (same slot in the Berserker_Middle/TypeA/TypeBommer/TypeGrapple/TypeShooter vtables); returns float field +0x183C	migrated from function-labels.tsv
+steam-17055427	0x00541FF0	GameObject_EnqueueDamage		likely	edf6-all-forces docs/havok-mt-re.md: 伤害入队，用 0x00050BC0 scoped lock	
+steam-17055427	0x00542490	GameDamageInfo_ApplyAreaDamage		likely	edf6-all-forces docs/decoy-blast-re.md: 带半径参数的重载	
+steam-17055427	0x00542670	GameDamageInfo_ApplyAreaDamage_GdiRadius		likely	edf6-all-forces docs/decoy-blast-re.md: 半径取 GDI+0x58 的重载	
+steam-17055427	0x00542860	GameDamageInfo_ApplyAreaDamageImpl		likely	edf6-all-forces docs/decoy-blast-re.md: 两个重载共用；球查询+逐目标扣血	
+steam-17055427	0x00543DD0	GameDamageInfo_AreaFilter_DoCall		likely	edf6-all-forces docs/decoy-blast-re.md: 过滤 lambda vtable 0x017CD288 的 _Do_call	
+steam-17055427	0x00547870	GameObjectBase_AddHealth		likely	edf6-all-forces docs/itembox-re.md: 加耐久 +0x2F8，夹在 +0x2F0..+0x2F4	名字按功能概括
+steam-17055427	0x00547C30	GameObjectBase_ApplyDamage		likely	edf6-all-forces docs/damage-stats-re.md: 写 +0x2F8 HP，+0x2E8 置死亡	名字按功能概括
+steam-17055427	0x00548AE0	GameObject_DeathDrop		likely	edf6-all-forces docs/itembox-re.md: 读 game_object_drop_item	
+steam-17055427	0x00549970	GameObjectBase_HealFollowers		likely	edf6-all-forces docs/itembox-re.md: 递归治疗 +0x550 跟随者	
+steam-17055427	0x0054DDF0	GameObject_LoadCameraSetting		likely	reverse engineered: edf6-all-forces docs/camera-re.md, reads game_object_camera_setting	migrated from function-labels.tsv
+steam-17055427	0x0054EE70	GameObject_SetTeam		likely	edf6-all-forces docs/airstrike-re.md: 写 +0x314/+0x318，登记到 0x020B2978	
+steam-17055427	0x00570650	Soldier_MapInput		likely	edf6-all-forces docs/npc-mobility-re.md: 输入映射（笔记记作 0x00570757，即本函数经 .pdata 链式展开的片段），四份拷贝把输入对象 +0x4C1/+0x4C0 写进 d7B/d7C；scope-accuracy-re.md 同	zoom-re.md: 片段内 0x00570780 处把瞄准增量除以 human+0x1D0
+steam-17055427	0x005763E0	Human_SendVehicleRideEvent		likely	edf6-all-forces docs/all-classes-ride-re.md: 发送 HUMAN_EVENT_VEHICLE_RIDE	
+steam-17055427	0x00591130	Player_CreateOnline		likely	edf6-all-forces docs/loadout-re.md: 联机按记录建人；edf5-online-re.md 同	
+steam-17055427	0x00591410	Player_CreateOffline		likely	edf6-all-forces docs/loadout-re.md: 离线本机建人(slot,transform,mode)	
+steam-17055427	0x00595C80	PlayerSpec_FromGameStatus		likely	edf6-all-forces docs/loadout-re.md: 0x00595CA4 解析到 0x020B2890	
+steam-17055427	0x0059ABB0	SoldierBase_OnUpdate		likely	edf6-all-forces docs/itembox-re.md: SoldierBase vtable 第 5 槽，拾取调用点 0x0059B938；zoom-re.md 同	
+steam-17055427	0x0059DE50	Player_PreloadResources		likely	edf6-all-forces docs/loadout-re.md: 读 GameStatus 兵种+武器，提交 0x007A3780	
+steam-17055427	0x005A3F90	Player_SpawnWithWeapon		likely	edf6-all-forces docs/loadout-re.md: 造人+造武器	
+steam-17055427	0x005A9E50	MoveArea_ClampPosition		likely	edf6-all-forces docs/aircraft-re.md: 把位置夹回活动区域；itembox-re.md 同	名字按功能概括
+steam-17055427	0x005AABB0	BombingPlane_Init		likely	reverse engineered: edf6-all-forces docs/airstrike-re.md, BombingPlane native spawn path	migrated from function-labels.tsv
+steam-17055427	0x005AB240	BombingPlane_Update		likely	reverse engineered: edf6-all-forces docs/airstrike-re.md, IndirectFireUnit caller	migrated from function-labels.tsv
+steam-17055427	0x005E5070	Transporter508_SpawnContainer_Slot50		likely	edf6-all-forces docs/online-re.md: Transporter508 vtable 第 50 槽，生成集装箱	
+steam-17055427	0x005E8C00	TransporterContainer_UnloadState		likely	edf6-all-forces docs/online-re.md: 卸车态按 +0xB80 SGO 路径 CreateObject	
+steam-17055427	0x005EA6C0	TransporterFormation_Slot50		likely	edf6-all-forces docs/online-re.md: 载具投送链，vtable 第 50 槽	
+steam-17055427	0x0061B710	Vehicle506_Helicopter_Slot57		confirmed	edf6-all-forces docs/aircraft-re.md: 506 vtable 0x017DB238 第 57 槽；stock-payload-re.md 同	
+steam-17055427	0x0062B430	VehicleBase_ConstructSeat		likely	edf6-all-forces docs/all-classes-ride-re.md: 载具基类构造 0x00629C47 调用，每个 riding_position 一次	
+steam-17055427	0x0062E1A0	Vehicle_SeatKick		likely	edf6-all-forces docs/aircraft-re.md: 清座位上的 DummyVehicleRider	
+steam-17055427	0x00633330	Vehicle_SetWeaponObject		likely	edf6-all-forces docs/damage-stats-re.md: 载具武器 owner=载具本身；swarm-team-re.md 同	
+steam-17055427	0x0064AF90	Vehicle409_Helicopter_Slot57		likely	edf6-all-forces docs/stock-payload-re.md: 409 vtable 0x017DEF98 第 57 槽，0x0064B05D 读 +0x2021	
+steam-17055427	0x0064D870	Vehicle410_Slot57		likely	edf6-all-forces docs/aircraft-re.md: 410 的 vtable 第 57 槽	
+steam-17055427	0x00650D40	VehicleHelicopterBase::LoadRotorParams		likely	edf6-all-forces docs/aircraft-re.md: 填 veh+0x1BC8 旋翼结构	
+steam-17055427	0x006519A0	VehicleHelicopterBase::UpdatePhysicsAndWeapons		likely	reverse engineered: edf6-all-forces docs/heli-input-re.md, primary vtable slot 57	migrated from function-labels.tsv
+steam-17055427	0x00651F90	VehicleHelicopterBase::SyncPose_Slot51		likely	edf6-all-forces docs/aircraft-re.md: vtable 第 51 槽；把位置拉向主控机位姿	
+steam-17055427	0x00652630	VehicleHelicopterBase::UpdatePhase		likely	reverse engineered: edf6-all-forces docs/heli-input-re.md, primary vtable slot 60	migrated from function-labels.tsv
+steam-17055427	0x00652B30	VehicleHelicopterBase::Contact		likely	edf6-all-forces docs/havok-mt-re.md: 接触回调表，0x00050BC0 加锁	
+steam-17055427	0x006530E0	VehicleHelicopterBase::Init_Slot46		likely	edf6-all-forces docs/aircraft-re.md: vtable 第 46 槽；rdi=veh+0x1580 读 SGO	
+steam-17055427	0x006543A0	VehicleHelicopterBase::UpdateInput		likely	reverse engineered: edf6-all-forces docs/heli-input-re.md, primary vtable slot 55	migrated from function-labels.tsv
+steam-17055427	0x00654A80	VehicleHelicopterBase::UpdateAttitude		likely	edf6-all-forces docs/aircraft-re.md: rbx=veh+0x15C0，yawOffset/姿态	
+steam-17055427	0x00656660	VehicleHelicopterBase::UpdateRotor		likely	edf6-all-forces docs/aircraft-re.md: 旋翼，参数 veh+0x1BC8	
+steam-17055427	0x0065A680	Car_FireMain_Slot82		likely	edf6-all-forces docs/stock-payload-re.md: RT>=0.8 时拉 veh+0x638 持有者开火	
+steam-17055427	0x0068A920	Weapon_LoadFromSgo		likely	edf6-all-forces docs/zoom-re.md: 武器加载器，读 SecondaryFire_Type/Parameter	名字按功能概括
+steam-17055427	0x006934F0	Weapon_Update		likely	edf6-all-forces docs/zoom-re.md: 武器每帧；+0x13B 副开火沿；stock-payload-re.md 同	名字按功能概括
+steam-17055427	0x00695F10	Weapon_ZoomOff		likely	edf6-all-forces docs/zoom-re.md: 开着就关	
+steam-17055427	0x00696310	Weapon_ToggleZoom		likely	edf6-all-forces docs/zoom-re.md: +0x780 翻转，+0x784=倍率	
+steam-17055427	0x00698570	Weapon_SecondaryFireDispatch		likely	edf6-all-forces docs/zoom-re.md: 按 +0x690 跳表分派	
+steam-17055427	0x006A8B50	Weapon_RadioContact::UpdateCall		likely	reverse engineered: edf6-all-forces docs/airstrike-re.md, calls at 0x006A8DFB and 0x006A8EC8	migrated from function-labels.tsv
+steam-17055427	0x00705A60	Application_OnWorldStepBegin		likely	edf6-all-forces docs/mission-cycle-re.md: 只经 Application vtable 槽 0x017E91E0 调用	
+steam-17055427	0x0070E330	Script_FreeResourceGroup		confirmed	edf6-all-forces docs/mission-cycle-re.md: 声明字符串 0x017EAD70，0x0071D094 取地址注册	
+steam-17055427	0x0070F0B0	Script_Mission		likely	edf6-all-forces docs/mission-cycle-re.md: 首次调用时加载 mission.bvm	
+steam-17055427	0x0070FAF0	Script_SetUsedWeapon		likely	edf6-all-forces docs/loadout-re.md: 任务脚本 SetUsedWeapon()	
+steam-17055427	0x0070FE00	Script_SystemReset		confirmed	edf6-all-forces docs/mission-cycle-re.md: 声明字符串 0x017EA990，0x0071C246 取地址注册	
+steam-17055427	0x0073D960	RoomReadyState_Update		likely	reverse engineered: edf6-all-forces docs/room-start-gate-re.md, HUiRoom update at 0x008FE3D9	migrated from function-labels.tsv
+steam-17055427	0x00772560	UniqueKeyHolder_OnHavokBegin_Lambda		likely	edf6-all-forces docs/havok-mt-re.md: 订阅者表	
+steam-17055427	0x007813A0	NetRegister_BulletDerived		likely	edf6-all-forces docs/online-re.md: 诱饵 0x002A1560 调用，remoteOwned 由调用者给	
+steam-17055427	0x00781630	NetRegister_Enemy		likely	edf6-all-forces docs/online-re.md: 敌人/生物类十余处调用	
+steam-17055427	0x00781950	NetRegister_VehicleDelivery		likely	edf6-all-forces docs/online-re.md: 烟幕弹/Transporter slot50 调用，remoteOwned=!IsHost	
+steam-17055427	0x007834F0	NetRegister_MissionScriptSpawn		likely	edf6-all-forces docs/online-re.md: 0x001DE348 等处调用	
+steam-17055427	0x00784210	Net_IsHost		likely	edf6-all-forces docs/online-re.md: 不在房间返回 1，否则比较房主 0x00734F00	
+steam-17055427	0x0078E9A0	MissionSync_PackEquipment		likely	edf6-all-forces docs/loadout-re.md: 打包本机装备记录	
+steam-17055427	0x007A3780	ResourceMgr_Preload		likely	edf6-all-forces docs/decoy-blast-re.md: Preload(*(img+0x020B29A8),path,2,-1)，调用点 0x0059DF21	
+steam-17055427	0x007DB520	UiSoldierSelect_WriteSoldier		likely	edf6-all-forces docs/loadout-re.md: 写兵种/外观	
+steam-17055427	0x007DD680	UiWeaponSelect_WriteSelected		likely	edf6-all-forces docs/loadout-re.md: 写入选中武器	
+steam-17055427	0x00820250	HUiHudDamage::Notify_Slot21		likely	edf6-all-forces docs/vehiclefps-0.1.66-re.md: HUiHudDamage 通知槽	
+steam-17055427	0x008202B0	HUiHudDamage::Draw_Slot2		likely	edf6-all-forces docs/vehiclefps-0.1.66-re.md: HUiHudDamage 绘制槽	
+steam-17055427	0x0082B4D0	HUiHudRader::Draw_Slot2		likely	edf6-all-forces docs/hud-re.md: HUiHudRader vtable 第 2 槽，取 +0x90 位置画点；vehiclefps-0.1.66-re.md 同	
+steam-17055427	0x0086B370	HUiChatLambda_Move		likely	RTTI .?AV?$_Func_impl_no_alloc@V<lambda_1>@...HUiChat@ui@@...; vtable 0x017FF590 slot 1 = std::_Func_base::_Move (slot 3 _Target_type returns the lambda type descriptor 0x02067050)	migrated from function-labels.tsv; renamed from HUiChatLambda_Copy: MSVC _Func_base slot 0 is _Copy, slot 1 is _Move
+steam-17055427	0x008FD8F0	HUiRoom::Request_ReadyWait		likely	reverse engineered: edf6-all-forces docs/room-start-gate-re.md, callback registration	migrated from function-labels.tsv
+steam-17055427	0x00DAB360	Havok_getBodyProperty		likely	edf6-all-forces docs/gravity-re.md: 读槽 29，返回属性值地址	
+steam-17055427	0x00DAC200	Havok_isBodyValid		likely	edf6-all-forces docs/gravity-re.md: flags&3 且 +0x50==id（读槽 13）	
+steam-17055427	0x00DAF270	Havok_setBodyProperty		likely	edf6-all-forces docs/gravity-re.md: 写槽 45；key0=SceneObject*，0x8001=Body*	
+steam-17055427	0x00E4D160	hknpWorld::castRay		confirmed	edf6-all-forces docs/raycast-re.md: hknpWorld vtable 第 54 槽，函数内引用 "TtWorldCastRay" 字符串	
+steam-17055427	0x00E7E570	hknpMultithreadedSimulation::BuildCollideTasks		likely	edf6-all-forces docs/havok-mt-re.md: collide 任务由此构建	
+steam-17055427	0x00E82390	hknpMultithreadedSimulation::BuildSolveTasks		likely	edf6-all-forces docs/havok-mt-re.md: solve 任务由此构建	
+steam-17055427	0x010AB600	BVM_ExecuteInstruction		likely	reverse engineered: edf6-all-forces docs/edf5-online-re.md, dispatch table 0x010AC49C	migrated from function-labels.tsv
+steam-17055427	0x0118A1B0	GameObject_Destroy		likely	edf6-all-forces docs/aircraft-re.md: 幂等；注销 0x020B2958 中的 shared_ptr	名字按功能概括
+steam-17055427	0x0118AFC0	SceneCamera_ctor		likely	edf6-all-forces docs/zoom-re.md: +0x20=+0x24=π/4	
+steam-17055427	0x0118DFF0	SceneCamera_BuildProjection		likely	edf6-all-forces docs/zoom-re.md: 读 cam+0x24 写 cam+0x1A0	
+steam-17055427	0x011945E0	Scene_CreateObject		confirmed	edf6-all-forces docs/airstrike-re.md: CreateObject(g,xf,sgo,InitParam)，多处调用点核对；decoy-blast-re.md 同	
+steam-17055427	0x01198DA0	System_Update		likely	edf6-all-forces docs/frame-pacing-re.md: 0x00705715 调用，[System+0xCE4]+=n/60	
+steam-17055427	0x011A7EE0	Havok_CastRay		likely	edf6-all-forces docs/raycast-re.md: GetGroundPosition 在 0x002088AA 调用	
+steam-17055427	0x011AD220	Havok_World_GetBodyShared		likely	edf6-all-forces docs/gravity-re.md: 同 GetBody 并 lock weak，失败抛 bad_weak_ptr	
+steam-17055427	0x011AD2E0	Havok_World_GetBody		likely	edf6-all-forces docs/gravity-re.md: 先调 isBodyValid 再取属性 key 0x8001；bullet-pass-re.md 同	返回裸指针
+steam-17055427	0x011B1060	Havok_Body_GetAngularVelocity		likely	edf6-all-forces docs/gravity-re.md: 调 0x00DF68A0(motion,out)	
+steam-17055427	0x011B1190	Havok_Body_GetCenterOfMassWorld		likely	edf6-all-forces docs/gravity-re.md: motion+0x10 的 double3 转 float	
+steam-17055427	0x011B1270	Havok_Body_GetInertiaAndMass		likely	edf6-all-forces docs/gravity-re.md: xyz=1/局部逆惯量，w=质量	
+steam-17055427	0x011B1300	Havok_Body_GetLinearVelocity		likely	edf6-all-forces docs/gravity-re.md: 返回 &motion+0x60	w 分量是速度上限
+steam-17055427	0x011B13D0	Havok_Body_GetMass		likely	edf6-all-forces docs/gravity-re.md: 1/half(motion+0x46)，逆质量 0 时返回 0	
+steam-17055427	0x011B1460	Havok_Body_GetTransform		likely	edf6-all-forces docs/gravity-re.md: tail-jmp 0x0097D870(body,m)	
+steam-17055427	0x011B14A0	Havok_Body_GetMotionType		likely	edf6-all-forces docs/gravity-re.md: 返回 0 static / 1 keyframed / 2 dynamic	
+steam-17055427	0x011B1520	Havok_Body_GetPointVelocity		likely	edf6-all-forces docs/gravity-re.md: 调 0x00DF6A50，v+ω×(p-com)	
+steam-17055427	0x011B15B0	Havok_Body_GetPosition		likely	edf6-all-forces docs/gravity-re.md: 返回 &hknpBody+0x30	
+steam-17055427	0x011B1760	Havok_Body_SetAngularVelocity		likely	edf6-all-forces docs/gravity-re.md: 写槽 22 [+0xB0]	世界坐标系
+steam-17055427	0x011B18F0	Havok_Body_SetLinearVelocity		likely	edf6-all-forces docs/gravity-re.md: 写 body 槽 21 [+0xA8] 的 tail-jmp；aircraft-re.md 同	
+steam-17055427	0x011B1930	Havok_Body_SetMass		likely	edf6-all-forces docs/gravity-re.md: 写槽 31 [+0xF8] 0x00E4FF50	
+steam-17055427	0x011B1960	Havok_Body_SetMotionType		likely	edf6-all-forces docs/gravity-re.md: 写槽 27 [+0xD8] 0x00E507F0	
+steam-17055427	0x011B1A00	Havok_Body_SetPosition		likely	edf6-all-forces docs/aircraft-re.md: SetPosition(body, vec4*) 包装	
+steam-17055427	0x011DFD50	CustomCharRigidBody_PostCollide		likely	edf6-all-forces docs/havok-mt-re.md: world signal 订阅者，+0x860	
+steam-17055427	0x011DFF70	CustomCharRigidBody_PostSolve		likely	edf6-all-forces docs/havok-mt-re.md: world signal 订阅者，+0x870	
+steam-17055427	0x011DFF90	CustomCharRigidBody_PreCollide		likely	edf6-all-forces docs/havok-mt-re.md: world signal 订阅者，+0x858，0x011DDD20 订阅	
+steam-17055427	0x011E7E20	asCContext::ExecuteNext		confirmed	upstream source match: AngelScript 2.28.2 as_context.cpp, dispatch 0x011E7E93, caller 0x011E59B3	migrated from function-labels.tsv
+steam-17055427	0x011FD0D0	asGetLibraryVersion		confirmed	upstream source match: AngelScript 2.28.2, returns version string at 0x01AEBC00	migrated from function-labels.tsv
+steam-17055427	0x0130FE20	hknpThreadPool::ProcessTaskQueue		likely	edf6-all-forces docs/havok-mt-re.md: pool vtable 第 4 槽，worker 主循环	

@@ -1,0 +1,6 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x000C	4	hit_count	i32	likely	edf6-all-forces docs/raycast-re.md: 游戏写 cmp dword [col+0xC],0，0x00208AB7	
+steam-17055427	0x0030	16	hit_point	float4	likely	edf6-all-forces docs/raycast-re.md: 0x00208AC8 直接取作地面点	
+steam-17055427	0x0040	16	hit_normal	float4	likely	edf6-all-forces docs/raycast-re.md: 直升机 0x00654720 作法线输出	
+steam-17055427	0x0050	4	hit_fraction	float	likely	edf6-all-forces docs/raycast-re.md: 0x00214D1D 用比例求命中点；0x00651D31 判着地	
+steam-17055427	0x0078	4	hit_body_id	u32	likely	edf6-all-forces docs/raycast-re.md: 0x0067DC45 -> 0x011AD2E0 查 body	

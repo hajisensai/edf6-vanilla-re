@@ -1,0 +1,52 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The history guard below needs every commit of the pull request.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Format checks for shared/ plus the game-artifact guard. No game files are available here.
+      - name: Lint shared data
+        run: python tools/lint_shared.py
+
+      # Every file version each commit of the PR added or modified, so an artifact added and deleted again inside the
+      # PR (still in its history) is rejected too.
+      - name: Guard every commit of the pull request
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python tools/lint_shared.py --no-artifact-guard --history "$BASE_SHA...$HEAD_SHA"
+
+      - name: Unit tests
+        shell: bash
+        run: |
+          if [ ! -d tests ]; then
+            echo "no tests directory"
+            exit 0
+          fi
+          set +e
+          python -m unittest discover -s tests -v
+          code=$?
+          # Python 3.12 exits with 5 when no tests were discovered; that is not a failure here.
+          if [ "$code" -eq 5 ]; then exit 0; fi
+          exit "$code"
+
+      - name: Byte-compile all Python files
+        shell: bash
+        run: git ls-files -z '*.py' | xargs -0 --no-run-if-empty python -m py_compile

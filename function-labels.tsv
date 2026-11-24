@@ -1,0 +1,26 @@
+module	rva	label	evidence	source
+EDF.dll	0x001E31F0	RegisterMissionScriptBindings	reverse_engineered_label	angelscript/registrations.tsv and caller 0x001DD8BD
+EDF.dll	0x011E7E20	asCContext::ExecuteNext	upstream_match	AngelScript 2.28.2 as_context.cpp, dispatch 0x011E7E93, caller 0x011E59B3
+EDF.dll	0x011FD0D0	asGetLibraryVersion	upstream_match	AngelScript 2.28.2, returns version string at 0x01AEBC00
+EDF.dll	0x0020FF70	MissionScriptBVMImplement::DispatchNative	reverse_engineered_label	BVM dispatcher referenced by the BVM interpreter's adapter
+EDF.dll	0x010AB600	BVM_ExecuteInstruction	reverse_engineered_label	edf6-all-forces docs/edf5-online-re.md, dispatch table 0x010AC49C
+EDF.dll	0x002276E0	BVM_CommitStackPointer	reverse_engineered_label	RCX process, RDX new stack pointer; commit at 0x002100C9
+EDF.dll	0x001F68D0	SelectMissionScriptExecutor	reverse_engineered_label	edf6-all-forces docs/mission-script-format-re.md, task selector
+EDF.dll	0x001DD520	ConstructAngelScriptExecutor	reverse_engineered_label	edf6-all-forces docs/mission-script-format-re.md, call 0x001F6CE4
+EDF.dll	0x0020DC10	ConstructBVMExecutor	reverse_engineered_label	edf6-all-forces docs/mission-script-format-re.md, call 0x001F6C9F
+EDF.dll	0x00652630	VehicleHelicopterBase::UpdatePhase	reverse_engineered_label	edf6-all-forces docs/heli-input-re.md, primary vtable slot 60
+EDF.dll	0x006519A0	VehicleHelicopterBase::UpdatePhysicsAndWeapons	reverse_engineered_label	edf6-all-forces docs/heli-input-re.md, primary vtable slot 57
+EDF.dll	0x006543A0	VehicleHelicopterBase::UpdateInput	reverse_engineered_label	edf6-all-forces docs/heli-input-re.md, primary vtable slot 55
+EDF.dll	0x006A8B50	Weapon_RadioContact::UpdateCall	reverse_engineered_label	edf6-all-forces docs/airstrike-re.md, calls at 0x006A8DFB and 0x006A8EC8
+EDF.dll	0x002B5DA0	IndirectFireControl_Start	reverse_engineered_label	edf6-all-forces docs/airstrike-re.md, caller 0x006A8DFB
+EDF.dll	0x002B87A0	IndirectFireControl_Update	reverse_engineered_label	edf6-all-forces docs/airstrike-re.md, caller 0x006A8EC8
+EDF.dll	0x005AABB0	BombingPlane_Init	reverse_engineered_label	edf6-all-forces docs/airstrike-re.md, BombingPlane native spawn path
+EDF.dll	0x005AB240	BombingPlane_Update	reverse_engineered_label	edf6-all-forces docs/airstrike-re.md, IndirectFireUnit caller
+EDF.dll	0x008FD8F0	HUiRoom::Request_ReadyWait	reverse_engineered_label	edf6-all-forces docs/room-start-gate-re.md, callback registration
+EDF.dll	0x0073D960	RoomReadyState_Update	reverse_engineered_label	edf6-all-forces docs/room-start-gate-re.md, HUiRoom update at 0x008FE3D9
+EDF.dll	0x0054DDF0	GameObject_LoadCameraSetting	reverse_engineered_label	edf6-all-forces docs/camera-re.md, reads game_object_camera_setting
+EDF.dll	0x000F86A0	CharacterGhostCamera::Update	reverse_engineered_label	edf6-all-forces docs/camera-re.md, virtual slot 4
+EDF.dll	0x000FB9F0	CharacterGhostCamera::UpdateSeatedView	reverse_engineered_label	edf6-all-forces docs/camera-re.md, state 2
+EDF.dll	0x0033F480	EDF6_BerserkerBase::ReadFloatByTag	reverse_engineered_label	RTTI .?AVEDF6_BerserkerBase@@; vtable 0x017AC4B8 slot 46 (same slot in the Berserker_Middle/TypeA/TypeBommer/TypeGrapple/TypeShooter vtables); returns float field +0x183C
+EDF.dll	0x0086B370	HUiChatLambda_Move	reverse_engineered_label	RTTI .?AV?$_Func_impl_no_alloc@V<lambda_1>@...HUiChat@ui@@...; vtable 0x017FF590 slot 1 = std::_Func_base::_Move (slot 3 _Target_type returns the lambda type descriptor 0x02067050)
+EDF6.exe	0x00001000	LaunchGameThroughCPP_OnBoot	reverse_engineered_label	codes at 0x00001004 and import address table slot 0x00002000

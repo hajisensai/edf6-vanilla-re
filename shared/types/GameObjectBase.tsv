@@ -1,0 +1,9 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x02E8	1	dead	u8	likely	edf6-all-forces docs/damage-stats-re.md: HP<=0 置 1；fp-soldier-re.md 同	
+steam-17055427	0x02E9	1	killed_by_this_hit	u8	likely	edf6-all-forces docs/damage-stats-re.md: 这一下打死的	
+steam-17055427	0x02F0	4	hp_min	float	likely	edf6-all-forces docs/damage-stats-re.md: HP 下限	
+steam-17055427	0x02F4	4	hp_max	float	likely	edf6-all-forces docs/damage-stats-re.md: HP 上限	
+steam-17055427	0x02F8	4	hp	float	likely	edf6-all-forces docs/damage-stats-re.md: 当前 HP，0x00547C30 写	
+steam-17055427	0x0314	4	team	int	likely	edf6-all-forces docs/airstrike-re.md: SetTeam 写 +0x314/+0x318	
+steam-17055427	0x0318	4	team_alt	int	likely	edf6-all-forces docs/airstrike-re.md: SetTeam 同写；swarm-team-re.md 武器取 owner+0x318	
+steam-17055427	0x0394	4	damage_multiplier	float	likely	edf6-all-forces docs/damage-stats-re.md: 受伤倍率	
