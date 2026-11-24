@@ -1,0 +1,2 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x0090	8	swap_chain	IDXGISwapChain*	likely	edf6-all-forces docs/perf-probe-re.md: [+0x90] vtable+0x40 called as Present at 0x01118B45; QueryInterface for IDXGISwapChain succeeds live	
