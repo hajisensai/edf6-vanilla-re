@@ -39,3 +39,4 @@ steam-17055427	0x021360B0	g_SubWindowHwnd	HWND	likely	edf6-all-forces docs/vehic
 steam-17055427	0x021360C0	g_WheelAccum	int	likely	edf6-all-forces docs/unlimited-fps-re.md: 窗口过程 0x01183FE3 累加滚轮，0x011832D0 取走	
 steam-17055427	0x02136FF0	g_Renderer	Renderer	likely	edf6-all-forces docs/frame-pacing-re.md: 0x011A33DF 把它传给 Renderer_InitDevice；+0x80 设备，+0x90 交换链	
 steam-17055427	0x02139A78	g_HudDrawer	void*	likely	edf6-all-forces docs/hud-re.md: 0x000C2FB0(drawer=*(EDF+0x2139A78),...)	
+steam-17055427	0x02139B84	g_UpdateLoadPercent	float	likely	edf6-all-forces docs/unlimited-fps-re.md §4.2: 0x011A3033 每帧写 Update 用时占 60 Hz 一帧的百分比；LOD 裁剪 0x00134210 / 0x00136621 按 200-350 读	
