@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """Lint the shared/ reverse-engineering data and guard the repository against game-derived artifacts.
 
-校验 shared/ 下的 TSV 与笔记格式，并拒绝由游戏文件生成的产物（汇编、伪代码、sqlite、任务脚本、CPK 等）。
-只用 Python 标准库。退出码非 0 时逐行输出 `path:line: error: message`。
+Validate the TSV and note formats under shared/, and reject artifacts generated from game files (assembly, pseudocode, sqlite, mission scripts, CPKs, etc.).
+Python standard library only. On a non-zero exit code it prints `path:line: error: message` line by line.
 
-    python tools/lint_shared.py                      # 校验当前仓库
+    python tools/lint_shared.py                      # check the current repository
     python tools/lint_shared.py --game "D:/steam/steamapps/common/EARTH DEFENSE FORCE 6"
-    python tools/lint_shared.py --history BASE...HEAD   # 另查范围内每个提交新增/修改过的文件（防先加后删）
+    python tools/lint_shared.py --history BASE...HEAD   # also check files added/modified by every commit in the range (stops add-then-delete)
 
-守卫只是来源记录与防手滑的闸门，不是安全边界：它按特征拦截常见产物，拦不住刻意改写过的内容。
+The guard is a provenance record and a safeguard against slips, not a security boundary: it blocks common artifacts by signature and cannot stop deliberately rewritten content.
 """
 
 import argparse
@@ -351,7 +351,7 @@ def check_note_text(shown, text, report):
 
 
 def check_layout(shared, root, report):
-    allowed_top = {'builds.tsv', 'README.md', 'README.en.md', 'functions', 'data', 'types', 'notes'}
+    allowed_top = {'builds.tsv', 'README.md', 'README.zh-CN.md', 'functions', 'data', 'types', 'notes'}
     for path in sorted(shared.iterdir()):
         if path.name not in allowed_top:
             report.error(rel(path, root), 1, 'unexpected entry in shared/ (see CONTRIBUTING.md for the layout)')

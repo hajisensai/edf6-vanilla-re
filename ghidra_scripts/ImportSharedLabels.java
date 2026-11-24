@@ -1,5 +1,5 @@
 // Import the repository's shared/ labels (functions, data, optional types) into the current program.
-// 把仓库 shared/ 里的函数名、全局变量名（可选结构体）导入当前 Ghidra 程序。
+// Import the function names and global variable names (optionally structs) under the repository's shared/ into the current Ghidra program.
 //
 // Headless:
 //   analyzeHeadless <project> <name> -process EDF.dll -scriptPath ghidra_scripts \

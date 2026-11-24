@@ -64,7 +64,7 @@ class TableTests(LintCase):
         self.write('shared/data/EDF.dll.tsv', DATA_HEADER + f'{BUILD}\t0x00002000\tg_Foo\tFoo*\tguess\tstring ref\tnote\n')
         self.write('shared/types/Foo.tsv', TYPES_HEADER + f'{BUILD}\t0x0010\t4\thp\tfloat\tlikely\twrite at 0x1234\t\n'
                    + f'{BUILD}\t0x0014\t?\tblock\tstruct\tlikely\tread at 0x1238\t\n')
-        self.write('shared/notes/vehicle.md', '# 载具\n\n```\nshort\n```\n')
+        self.write('shared/notes/vehicle.md', '# Vehicle\n\n```\nshort\n```\n')
         self.assertClean(self.lint())
 
     def test_comments_and_blank_lines_are_ignored(self):
@@ -160,7 +160,7 @@ class TableTests(LintCase):
         self.assertError(report, 'must not contain sub-directories')
 
     def test_translated_readme_allowed(self):
-        self.write('shared/README.en.md', 'English\n')
+        self.write('shared/README.zh-CN.md', 'English\n')
         self.assertNotIn('unexpected entry', '\n'.join(map(str, self.lint().errors)))
 
     def test_note_code_block_limit(self):

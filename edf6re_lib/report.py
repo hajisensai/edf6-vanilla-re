@@ -1,4 +1,4 @@
-"""out/验证.md: every number is read back from the artifacts generate.py just wrote on this machine."""
+"""out/VERIFICATION.md: every number is read back from the artifacts generate.py just wrote on this machine."""
 
 import csv
 import json
@@ -82,15 +82,15 @@ def write(out, modules, verify_output):
     finally:
         db.close()
 
-    parts = ['# EDF6 原版代码导出核对', '',
-             f'本机由 `generate.py` 生成，{time.strftime("%Y-%m-%d %H:%M")}。下面每个数字都从本次输出目录读回，不是抄来的。', '',
-             '## 原生反汇编', '',
-             table(('文件', 'PE TimeDateStamp', '首选基址', 'SHA-256'), identity, numeric_from=4), '',
-             table(('文件', '可执行字节', '汇编行', '`.byte` 行', '`.pdata` 记录', '静态引用', 'RTTI 虚表', '虚表槽'), counts), '',
-             f'SQLite `integrity_check`：`{integrity}`。项目笔记地址匹配 {n(notes)} 条。`vanilla.py verify` 输出：', '',
+    parts = ['# EDF6 original code export verification', '',
+             f'Generated on this machine by `generate.py`, {time.strftime("%Y-%m-%d %H:%M")}. Every number below is read back from this run\'s output directory, not copied.', '',
+             '## Native disassembly', '',
+             table(('File', 'PE TimeDateStamp', 'Preferred base', 'SHA-256'), identity, numeric_from=4), '',
+             table(('File', 'Executable bytes', 'Assembly lines', '`.byte` lines', '`.pdata` records', 'Static references', 'RTTI vtables', 'Vtable slots'), counts), '',
+             f'SQLite `integrity_check`: `{integrity}`. Project note addresses matched: {n(notes)}. `vanilla.py verify` output:', '',
              '```', verify_output.strip(), '```', '']
 
-    parts += ['## Ghidra 各轮', '']
+    parts += ['## Ghidra passes', '']
     totals = []
     for module in modules:
         passes = pass_counts(out, module)
@@ -102,28 +102,28 @@ def write(out, modules, verify_output):
         ok = sum(status.values())
         totals.append((f'`{module}`', len(status), ok, len(status) - ok))
         parts += [f'### `{module}`', '',
-                  f'自动分析：{"达到 " + timeout.group(1) + " 秒时限后停止" if timeout else "在时限内完成"}。', '',
-                  table(('轮次', '导出条目', 'C 成功', '失败'), [(f'`{folder}`', *rest) for folder, *rest in passes]), '']
+                  f'Auto-analysis: {"stopped after reaching the " + timeout.group(1) + " s limit" if timeout else "finished within the limit"}.', '',
+                  table(('Pass', 'Exported entries', 'C succeeded', 'Failed'), [(f'`{folder}`', *rest) for folder, *rest in passes]), '']
         lists = []
         for name in addresses.LISTS:
             path = out / 'addresses' / module / name
             if path.exists():
                 lists.append((f'`addresses/{module}/{name}`', len(addresses.read_list(path))))
         if lists:
-            parts += [table(('自动算出的地址清单', '地址数'), lists), '']
+            parts += [table(('Computed address list', 'Addresses'), lists), '']
     if totals:
-        parts += ['### 合计', '', table(('文件', '唯一入口', '有 C 伪代码', '仍失败（超时）'), totals), '']
+        parts += ['### Totals', '', table(('File', 'Unique entries', 'With C pseudocode', 'Still failed (timeout)'), totals), '']
     pcode = pcode_totals(out)
     if pcode:
-        parts += ['超时函数的逐指令 P-code：', '', table(('文件', 'x64 指令', 'P-code 操作'), pcode), '']
+        parts += ['Instruction-level P-code of the timed-out functions:', '', table(('File', 'x64 instructions', 'P-code ops'), pcode), '']
 
     index = read_json(out / 'function-index' / 'summary.json')
     if index:
-        parts += ['## 函数总表', '', f'`function-index/functions.tsv` 共 {n(index["unique_entries"])} 个入口，'
-                  f'别名 {n(index["aliases"])} 条。', '',
-                  table(('代码形式', '入口'), sorted(index['code_kinds'].items())), '',
-                  table(('命名依据', '入口'), sorted(index['names_by_evidence'].items())), '',
-                  table(('`.pdata` 区间', '数量'), sorted(index['unwind_ranges'].items())), '']
+        parts += ['## Function index', '', f'`function-index/functions.tsv` has {n(index["unique_entries"])} entries, '
+                  f'{n(index["aliases"])} aliases.', '',
+                  table(('Code form', 'Entries'), sorted(index['code_kinds'].items())), '',
+                  table(('Naming evidence', 'Entries'), sorted(index['names_by_evidence'].items())), '',
+                  table(('`.pdata` range', 'Count'), sorted(index['unwind_ranges'].items())), '']
 
     files = out / 'missions' / 'files.tsv'
     if files.exists():
@@ -135,25 +135,25 @@ def write(out, modules, verify_output):
                 entry[row['format']] += 1
         bvm = [row for row in rows if row['format'] == '.BVM' and not row['error']]
         usage = tsv_rows(out / 'missions' / 'native-usage.tsv')
-        parts += ['## 任务脚本', '',
-                  table(('归档', 'AngelScript', '头文件', 'BVM 清单'),
+        parts += ['## Mission scripts', '',
+                  table(('Archive', 'AngelScript', 'Header files', 'BVM listings'),
                         [(f'`{archive}`', c['.AC'], c['.H'], c['.BVM']) for archive, c in by_archive.items()]), '',
-                  f'索引 {n(len(rows))} 条，出错 {n(sum(bool(row["error"]) for row in rows))} 条。'
-                  f'AC 共 {n(sum(int(row["lines"]) for row in rows if row["format"] == ".AC" and not row["error"]))} 行；'
-                  f'BVM 共 {n(sum(int(row["functions"]) for row in bvm))} 个函数、'
-                  f'{n(sum(int(row["instructions"]) for row in bvm))} 条指令。'
-                  f'native 使用表有 {n(len(usage))} 个 `(table, id)`，合计 {n(sum(int(row["call_sites"]) for row in usage))} 个调用位置。', '']
+                  f'{n(len(rows))} indexed, {n(sum(bool(row["error"]) for row in rows))} with errors. '
+                  f'AC: {n(sum(int(row["lines"]) for row in rows if row["format"] == ".AC" and not row["error"]))} lines in total; '
+                  f'BVM: {n(sum(int(row["functions"]) for row in bvm))} functions, '
+                  f'{n(sum(int(row["instructions"]) for row in bvm))} instructions. '
+                  f'The native usage table has {n(len(usage))} `(table, id)` pairs, {n(sum(int(row["call_sites"]) for row in usage))} call sites in total.', '']
 
     bvm_summary = read_json(out / 'bvm-native' / 'summary.json')
     if bvm_summary:
         flat = [(f'`{key}`', value if not isinstance(value, dict) else json.dumps(value, ensure_ascii=False))
                 for key, value in bvm_summary.items() if not key.endswith('sha256')]
-        parts += ['## BVM native', '', table(('项目', '值'), flat), '']
+        parts += ['## BVM native', '', table(('Item', 'Value'), flat), '']
 
-    parts += ['## 限制', '',
-              '伪代码是 Ghidra 推断：类型、控制流和函数边界需要对照汇编核对；没有 pdb，名称来自 RTTI、脚本绑定、'
-              '指令模式和 `shared/` 标签。只经运行时计算或间接调用进入、且没有静态引用的函数可能仍未识别。', '']
-    target = out / '验证.md'
+    parts += ['## Limitations', '',
+              'The pseudocode is Ghidra inference: types, control flow and function boundaries must be checked against the assembly; there is no pdb, and names come from RTTI, script bindings, '
+              'instruction patterns and `shared/` labels. Functions reached only through runtime computation or indirect calls, with no static reference, may still be unrecognized.', '']
+    target = out / 'VERIFICATION.md'
     temporary = target.with_name(target.name + '.tmp')
     temporary.write_text('\n'.join(parts), encoding='utf-8', newline='\n')
     temporary.replace(target)

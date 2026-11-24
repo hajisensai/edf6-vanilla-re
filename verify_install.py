@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
-"""核对本机 EDF6 安装是否为官方原版（生成汇编 / 伪代码 / 任务脚本索引前的闸门）。
+"""Check that the local EDF6 install is the official original build (the gate before generating assembly / pseudocode / mission script indexes).
 
-依据：
-  - PE 模块（EDF.dll / EDF6.exe）判官方只认 known-builds.tsv 的 SHA-256（模块名也要一致）。
-    生成结果的地址绑定具体构建，未登记的构建即使与 Steam 清单一致也不放行：
-    判为「Steam 新构建，未登记」（unregistered，退出码 3），需要时 --allow-unofficial 放行，
-    并去 PR 把它登记进 known-builds.tsv 与 shared/builds.tsv。
-  - 其余文件（CPK）按 Steam depot 清单（depotcache/<depot>_<manifest>.manifest）里同名条目的 SHA1，
-    或 known-builds.tsv 的 SHA-256。清单由 steamapps/appmanifest_2291060.acf 的 InstalledDepots 定位。
-    清单文件名加密时只按 sha_filename（文件名哈希）找对应条目，不做跨文件的 SHA1 集合匹配。
-  对不上 → 非官方。
+Basis:
+  - PE modules (EDF.dll / EDF6.exe) count as official only by SHA-256 in known-builds.tsv (the module name must match too).
+    Generated addresses are bound to one specific build, so an unregistered build is not let through even if it matches the Steam manifest:
+    it is judged "Steam new build, not registered" (unregistered, exit code 3); --allow-unofficial lets it through when needed,
+    and the build should then be registered in known-builds.tsv and shared/builds.tsv via a PR.
+  - Other files (CPKs) are compared with the SHA1 of the same-named entry in the Steam depot manifest (depotcache/<depot>_<manifest>.manifest),
+    or with a SHA-256 in known-builds.tsv. The manifest is located from InstalledDepots in steamapps/appmanifest_2291060.acf.
+    When manifest file names are encrypted, entries are matched only by sha_filename (the file-name hash); there is no cross-file SHA1 set matching.
+  No match -> unofficial.
 
-只用标准库；只读游戏目录，不写入。
+Standard library only; the game directory is read-only.
 
-命令行：
-  python verify_install.py "<游戏目录>" [--quick] [--json PATH] [--steam-root DIR] [--manifest FILE ...]
-退出码：0 官方（--quick 时为「PE 官方，CPK 未核对」），2 非官方或被改，
-        3 无法判定（缺依据 / Steam 新构建未登记）。
+Command line:
+  python verify_install.py "<game directory>" [--quick] [--json PATH] [--steam-root DIR] [--manifest FILE ...]
+Exit codes: 0 official (with --quick: "PEs official, CPKs not checked"), 2 unofficial or modified,
+        3 undecided (no basis / new Steam build not registered).
 
-可 import：
+Importable:
   verify(game_dir, quick=False, ...) -> dict
   require_official(game_dir, modules, allow_unofficial=False) -> dict
 """
@@ -41,7 +41,7 @@ APP_ID = "2291060"
 HERE = Path(__file__).resolve().parent
 KNOWN_BUILDS_TSV = HERE / "known-builds.tsv"
 
-# 代码生成实际要用的文件；PE 之外的在 --quick 下跳过
+# Files code generation actually needs; non-PE files are skipped under --quick
 TARGET_MODULES = ("EDF.dll", "EDF6.exe", "Root.cpk", "Chunk01.cpk", "Chunk02.cpk", "DX11.cpk")
 PE_MODULES = ("EDF.dll", "EDF6.exe")
 
@@ -50,7 +50,7 @@ EXIT_UNOFFICIAL = 2
 EXIT_UNDECIDED = 3
 
 # ---------------------------------------------------------------------------
-# 最小 protobuf 解码
+# Minimal protobuf decoder
 # ---------------------------------------------------------------------------
 
 
@@ -63,7 +63,7 @@ def _read_varint(buf: bytes, pos: int) -> tuple[int, int]:
     shift = 0
     while True:
         if pos >= len(buf):
-            raise ProtoError("varint 越界")
+            raise ProtoError("varint out of range")
         b = buf[pos]
         pos += 1
         result |= (b & 0x7F) << shift
@@ -71,38 +71,38 @@ def _read_varint(buf: bytes, pos: int) -> tuple[int, int]:
             return result, pos
         shift += 7
         if shift > 63:
-            raise ProtoError("varint 过长")
+            raise ProtoError("varint too long")
 
 
 def iter_fields(buf: bytes):
-    """逐个产出 (field_no, wire_type, value)。value：varint/fixed 为 int，length-delimited 为 bytes。"""
+    """Yield (field_no, wire_type, value) one by one. value: int for varint/fixed, bytes for length-delimited."""
     pos = 0
     n = len(buf)
     while pos < n:
         key, pos = _read_varint(buf, pos)
         field, wt = key >> 3, key & 7
         if field == 0:
-            raise ProtoError("字段号为 0")
+            raise ProtoError("field number is 0")
         if wt == 0:
             val, pos = _read_varint(buf, pos)
         elif wt == 1:
             if pos + 8 > n:
-                raise ProtoError("fixed64 越界")
+                raise ProtoError("fixed64 out of range")
             val = struct.unpack_from("<Q", buf, pos)[0]
             pos += 8
         elif wt == 2:
             ln, pos = _read_varint(buf, pos)
             if pos + ln > n:
-                raise ProtoError("length-delimited 越界")
+                raise ProtoError("length-delimited out of range")
             val = bytes(buf[pos:pos + ln])
             pos += ln
         elif wt == 5:
             if pos + 4 > n:
-                raise ProtoError("fixed32 越界")
+                raise ProtoError("fixed32 out of range")
             val = struct.unpack_from("<I", buf, pos)[0]
             pos += 4
         else:
-            raise ProtoError(f"不支持的 wire type {wt}")
+            raise ProtoError(f"unsupported wire type {wt}")
         yield field, wt, val
 
 
@@ -141,7 +141,7 @@ def _parse_mapping(buf: bytes) -> dict:
 
 
 def parse_manifest_bytes(data: bytes) -> dict:
-    """解析 depot manifest 二进制（也接受 CDN 下载的 zip 包装）。"""
+    """Parse a depot manifest binary (a zip wrapper downloaded from the CDN is also accepted)."""
     if data[:2] == b"PK":
         with zipfile.ZipFile(io.BytesIO(data)) as zf:
             data = zf.read(zf.namelist()[0])
@@ -157,11 +157,11 @@ def parse_manifest_bytes(data: bytes) -> dict:
             saw_end = True
             break
         if pos + 4 > len(data):
-            raise ProtoError("section 长度越界")
+            raise ProtoError("section length out of range")
         ln = struct.unpack_from("<I", data, pos)[0]
         pos += 4
         if pos + ln > len(data):
-            raise ProtoError(f"section 0x{magic:08X} 长度 {ln} 超出文件")
+            raise ProtoError(f"section 0x{magic:08X} length {ln} exceeds the file")
         body = data[pos:pos + ln]
         pos += ln
         if magic == MAGIC_PAYLOAD:
@@ -181,9 +181,9 @@ def parse_manifest_bytes(data: bytes) -> dict:
                 if f == 1:
                     signature = v
         else:
-            raise ProtoError(f"未知 section 魔数 0x{magic:08X}")
+            raise ProtoError(f"unknown section magic 0x{magic:08X}")
     if not saw_payload:
-        raise ProtoError("缺少 payload section")
+        raise ProtoError("missing payload section")
     meta["filenames_encrypted"] = bool(meta.get("filenames_encrypted", False))
     return {"metadata": meta, "mappings": mappings, "has_signature": bool(signature),
             "has_end_marker": saw_end}
@@ -200,12 +200,12 @@ def norm_name(name: str) -> str:
 
 
 def sha_filename_of(name: str) -> bytes:
-    """Steam 的 sha_filename = SHA1(小写、反斜杠分隔的相对路径)。"""
+    """Steam's sha_filename = SHA1(lower-case relative path with backslash separators)."""
     return hashlib.sha1(norm_name(name).encode("utf-8")).digest()
 
 
 # ---------------------------------------------------------------------------
-# VDF（appmanifest_*.acf）
+# VDF (appmanifest_*.acf)
 # ---------------------------------------------------------------------------
 
 _VDF_TOKEN = re.compile(r'"((?:[^"\\]|\\.)*)"|([{}])|//[^\n]*')
@@ -217,17 +217,17 @@ def parse_vdf(text: str) -> dict:
     for m in _VDF_TOKEN.finditer(text):
         s, brace = m.group(1), m.group(2)
         if s is None and brace is None:
-            continue  # 注释
+            continue  # comment
         if brace == "{":
             if key is None:
-                raise ValueError("VDF：'{' 前没有键")
+                raise ValueError("VDF: no key before '{'")
             d: dict = {}
             stack[-1][key] = d
             stack.append(d)
             key = None
         elif brace == "}":
             if len(stack) == 1:
-                raise ValueError("VDF：多余的 '}'")
+                raise ValueError("VDF: extra '}'")
             stack.pop()
             key = None
         else:
@@ -249,12 +249,12 @@ def _find_steamapps(game_dir: Path) -> Path | None:
 
 def locate_manifests(game_dir: Path, steam_root: Path | None = None,
                      manifests: list[Path] | None = None) -> dict:
-    """返回 {'acf': path|None, 'buildid': str|None, 'depots': {depot: manifest_id},
+    """Return {'acf': path|None, 'buildid': str|None, 'depots': {depot: manifest_id},
     'files': [manifest paths], 'notes': [...]}"""
     info: dict = {"acf": None, "buildid": None, "depots": {}, "files": [], "notes": []}
     if manifests:
         info["files"] = [Path(p) for p in manifests]
-        info["notes"].append("清单由 --manifest 显式指定")
+        info["notes"].append("manifest given explicitly with --manifest")
     steamapps = None
     if steam_root:
         steamapps = Path(steam_root) / "steamapps"
@@ -266,17 +266,17 @@ def locate_manifests(game_dir: Path, steam_root: Path | None = None,
         try:
             st = parse_vdf(acf.read_text(encoding="utf-8", errors="replace")).get("AppState", {})
         except ValueError as e:
-            info["notes"].append(f"appmanifest 解析失败：{e}")
+            info["notes"].append(f"failed to parse appmanifest: {e}")
             st = {}
         info["buildid"] = st.get("buildid")
         if st.get("installdir") and st["installdir"].lower() != game_dir.name.lower():
-            info["notes"].append(f"appmanifest 的 installdir={st['installdir']!r} 与目录名不一致")
+            info["notes"].append(f"appmanifest installdir={st['installdir']!r} does not match the directory name")
         for depot, d in (st.get("InstalledDepots") or {}).items():
             if isinstance(d, dict) and d.get("manifest"):
                 info["depots"][depot] = d["manifest"]
         if not manifests:
             root = Path(steam_root) if steam_root else steamapps.parent
-            # 库文件夹不在 Steam 根时 depotcache 只在主 Steam 目录；两处都试
+            # When the library folder is not the Steam root, depotcache only exists in the main Steam directory; try both
             cands = [root / "depotcache"]
             for depot, mid in info["depots"].items():
                 fn = f"{depot}_{mid}.manifest"
@@ -284,9 +284,9 @@ def locate_manifests(game_dir: Path, steam_root: Path | None = None,
                 if hit:
                     info["files"].append(hit)
                 else:
-                    info["notes"].append(f"depotcache 里找不到 {fn}（可用 --steam-root / --manifest 指定）")
+                    info["notes"].append(f"{fn} not found in depotcache (use --steam-root / --manifest)")
     elif not manifests:
-        info["notes"].append("找不到 steamapps/appmanifest_2291060.acf（非 Steam 安装或目录被拷出）")
+        info["notes"].append("steamapps/appmanifest_2291060.acf not found (not a Steam install, or the directory was copied out)")
     return info
 
 
@@ -319,12 +319,12 @@ def load_known_builds(path: Path = KNOWN_BUILDS_TSV) -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
-# 文件哈希与 PE
+# File hashes and PE
 # ---------------------------------------------------------------------------
 
 
 def hash_file(path: Path, progress: bool = True, label: str | None = None) -> tuple[str, str, int]:
-    """流式算 (sha256, sha1, size)。大文件每 2 秒往 stderr 打进度。"""
+    """Stream-compute (sha256, sha1, size). Large files print progress to stderr every 2 seconds."""
     h256 = hashlib.sha256()
     h1 = hashlib.sha1()
     total = os.path.getsize(path)
@@ -348,7 +348,7 @@ def hash_file(path: Path, progress: bool = True, label: str | None = None) -> tu
                       f"{100 * done / max(total, 1):.1f}% {rate:.0f} MiB/s", file=sys.stderr, flush=True)
                 last = now
     if progress and total >= 64 << 20:
-        print(f"[hash] {label} 完成 {done / 2**30:.2f} GiB 用时 {time.monotonic() - t0:.0f}s",
+        print(f"[hash] {label} done {done / 2**30:.2f} GiB in {time.monotonic() - t0:.0f}s",
               file=sys.stderr, flush=True)
     return h256.hexdigest(), h1.hexdigest(), done
 
@@ -378,36 +378,36 @@ def pe_info(path: Path) -> dict | None:
 
 
 # ---------------------------------------------------------------------------
-# 第三方文件识别
+# Third-party file recognition
 # ---------------------------------------------------------------------------
 
-# (小写文件/目录名, 归属, 说明)
+# (lower-case file/dir name, owner, description)
 THIRD_PARTY_NAMES = [
-    ("cream_api.ini", "CreamAPI", "DLC 解锁配置"),
-    ("steam_api64_o.dll", "CreamAPI", "CreamAPI 改名保留的原版 steam_api64.dll"),
-    ("steam_api_o.dll", "CreamAPI", "CreamAPI 改名保留的原版 steam_api.dll"),
+    ("cream_api.ini", "CreamAPI", "DLC unlock config"),
+    ("steam_api64_o.dll", "CreamAPI", "original steam_api64.dll kept by CreamAPI under a new name"),
+    ("steam_api_o.dll", "CreamAPI", "original steam_api.dll kept by CreamAPI under a new name"),
     ("creamapi.dll", "CreamAPI", ""),
-    ("winmm.dll", "EDFModLoader", "代理 DLL 加载器"),
+    ("winmm.dll", "EDFModLoader", "proxy DLL loader"),
     ("modloader.ini", "EDFModLoader", ""),
     ("modloader.log", "EDFModLoader", ""),
     ("edfmodloader", "EDFModLoader", ""),
-    ("mods", "EDFModLoader", "Mods 目录"),
-    ("mod.dll", "第三方 Mod", "非 Steam 清单文件"),
-    ("mod.cpk", "第三方 Mod", "非 Steam 清单文件"),
-    ("epicdf61.exe", "Epic 版", "Epic 版主程序（与 Steam 版不同构建）"),
-    ("steam_settings", "Goldberg Steam 模拟器", ""),
-    ("steam_emu.ini", "Steam 模拟器（CODEX/RUNE 等）", ""),
-    ("steam_appid.txt", "Steam 模拟器 / 调试", ""),
-    ("local_save.txt", "Goldberg Steam 模拟器", ""),
+    ("mods", "EDFModLoader", "Mods directory"),
+    ("mod.dll", "third-party mod", "not in the Steam manifest"),
+    ("mod.cpk", "third-party mod", "not in the Steam manifest"),
+    ("epicdf61.exe", "Epic edition", "Epic main executable (a different build from Steam)"),
+    ("steam_settings", "Goldberg Steam emulator", ""),
+    ("steam_emu.ini", "Steam emulator (CODEX/RUNE etc.)", ""),
+    ("steam_appid.txt", "Steam emulator / debugging", ""),
+    ("local_save.txt", "Goldberg Steam emulator", ""),
     ("onlinefix.ini", "Online-Fix", ""),
     ("onlinefix64.dll", "Online-Fix", ""),
     ("smartsteamemu.ini", "SmartSteamEmu", ""),
-    ("ali213.ini", "ALI213 模拟器", ""),
-    ("3dmgame.ini", "3DM 模拟器", ""),
-    ("dinput8.dll", "代理 DLL 注入", ""),
-    ("d3d11.dll", "代理 DLL 注入（ReShade/SpecialK 等）", ""),
-    ("dxgi.dll", "代理 DLL 注入（ReShade/SpecialK 等）", ""),
-    ("version.dll", "代理 DLL 注入", ""),
+    ("ali213.ini", "ALI213 emulator", ""),
+    ("3dmgame.ini", "3DM emulator", ""),
+    ("dinput8.dll", "proxy DLL injection", ""),
+    ("d3d11.dll", "proxy DLL injection (ReShade/SpecialK etc.)", ""),
+    ("dxgi.dll", "proxy DLL injection (ReShade/SpecialK etc.)", ""),
+    ("version.dll", "proxy DLL injection", ""),
     ("reshade.ini", "ReShade", ""),
 ]
 _STEAMLESS_PAT = re.compile(r"(\.unpacked\.(exe|dll)$)|(\.(exe|dll)\.(bak|orig|original)$)|(_o\.exe$)",
@@ -424,21 +424,21 @@ def scan_third_party(game_dir: Path, manifest_names: set[str] | None) -> list[di
     for e in entries:
         low = e.name.lower()
         if manifest_names is not None and low in manifest_names:
-            continue  # 清单内文件：由哈希核对负责
+            continue  # files in the manifest: handled by the hash check
         kind = "dir" if e.is_dir() else "file"
         if low in table:
             who, why = table[low]
             found.append({"name": e.name, "kind": kind, "origin": who, "detail": why})
         elif _STEAMLESS_PAT.search(low):
-            found.append({"name": e.name, "kind": kind, "origin": "Steamless / 手工备份痕迹",
-                          "detail": "脱壳或替换前的备份文件名"})
+            found.append({"name": e.name, "kind": kind, "origin": "Steamless / manual backup leftover",
+                          "detail": "backup file name from before unpacking or replacement"})
         elif manifest_names is not None:
-            found.append({"name": e.name, "kind": kind, "origin": "未知", "detail": "Steam 清单里没有"})
+            found.append({"name": e.name, "kind": kind, "origin": "unknown", "detail": "not in the Steam manifest"})
     return found
 
 
 # ---------------------------------------------------------------------------
-# 核对
+# Verification
 # ---------------------------------------------------------------------------
 
 
@@ -449,7 +449,7 @@ def _now_iso() -> str:
 def verify(game_dir, quick: bool = False, steam_root=None, manifests=None,
            modules=TARGET_MODULES, known_builds_path: Path = KNOWN_BUILDS_TSV,
            progress: bool = True) -> dict:
-    """核对 game_dir，返回 provenance dict（见 --json 输出）。不写游戏目录。"""
+    """Verify game_dir and return a provenance dict (see the --json output). Never writes to the game directory."""
     game_dir = Path(game_dir).resolve()
     t0 = time.time()
     res: dict = {
@@ -460,7 +460,7 @@ def verify(game_dir, quick: bool = False, steam_root=None, manifests=None,
     if not game_dir.is_dir():
         res["verdict"] = "undecided"
         res["exit_code"] = EXIT_UNDECIDED
-        res["warnings"].append(f"目录不存在：{game_dir}")
+        res["warnings"].append(f"directory does not exist: {game_dir}")
         return res
 
     loc = locate_manifests(game_dir, steam_root, manifests)
@@ -468,7 +468,7 @@ def verify(game_dir, quick: bool = False, steam_root=None, manifests=None,
                     "manifests": []}
     res["warnings"].extend(loc["notes"])
 
-    by_name: dict[str, dict] = {}      # 小写名 → mapping（明文清单）
+    by_name: dict[str, dict] = {}      # lower-case name -> mapping (plain-text manifest)
     by_sha_filename: dict[bytes, dict] = {}
     any_encrypted = False
     parsed_any = False
@@ -476,7 +476,7 @@ def verify(game_dir, quick: bool = False, steam_root=None, manifests=None,
         try:
             man = parse_manifest_file(mpath)
         except (OSError, ProtoError, zipfile.BadZipFile) as e:
-            res["warnings"].append(f"清单 {mpath} 解析失败：{e}")
+            res["warnings"].append(f"failed to parse manifest {mpath}: {e}")
             continue
         parsed_any = True
         meta = man["metadata"]
@@ -488,12 +488,12 @@ def verify(game_dir, quick: bool = False, steam_root=None, manifests=None,
               "has_signature": man["has_signature"]}
         res["steam"]["manifests"].append(mi)
         if loc["depots"] and depot in loc["depots"] and loc["depots"][depot] != gid:
-            res["warnings"].append(f"清单 {mpath} 的 gid {gid} 与 appmanifest 记录的 "
-                                   f"{loc['depots'][depot]} 不一致")
+            res["warnings"].append(f"manifest {mpath} gid {gid} does not match the "
+                                   f"{loc['depots'][depot]} recorded by appmanifest")
         if meta["filenames_encrypted"]:
             any_encrypted = True
-            res["warnings"].append(f"depot {depot} 清单文件名已加密：无法逐名核对，"
-                                   "只按 sha_filename（文件名哈希）匹配对应条目")
+            res["warnings"].append(f"depot {depot} manifest file names are encrypted: cannot check by name, "
+                                   "matching entries by sha_filename (file-name hash) only")
         for m in man["mappings"]:
             m = dict(m, depot=depot, manifest_id=gid)
             if m["sha_filename"]:
@@ -502,7 +502,7 @@ def verify(game_dir, quick: bool = False, steam_root=None, manifests=None,
                 by_name[norm_name(m["filename"])] = m
     have_manifest = parsed_any
 
-    # 清单内文件：存在性与大小（只 stat，不算哈希）
+    # Files in the manifest: existence and size (stat only, no hashing)
     manifest_top_names: set[str] | None = None
     if have_manifest and not any_encrypted:
         manifest_top_names = set()
@@ -531,14 +531,14 @@ def verify(game_dir, quick: bool = False, steam_root=None, manifests=None,
         ref = by_name.get(norm_name(mod)) or by_sha_filename.get(sha_filename_of(mod))
         if not p.is_file():
             ent["verdict"] = "missing"
-            ent["detail"] = "文件不存在"
+            ent["detail"] = "file does not exist"
             continue
         ent["size"] = p.stat().st_size
         if quick and not is_pe:
             ent["verdict"] = "unchecked"
-            ent["detail"] = "--quick：未核对"
+            ent["detail"] = "--quick: not checked"
             if ref is not None and ref["size"] != ent["size"]:
-                ent["detail"] += f"（但大小与清单不符：清单 {ref['size']}）"
+                ent["detail"] += f" (but the size differs from the manifest: manifest {ref['size']})"
             continue
         ent["sha256"], ent["sha1"], _ = hash_file(p, progress=progress, label=mod)
         if is_pe:
@@ -553,23 +553,23 @@ def verify(game_dir, quick: bool = False, steam_root=None, manifests=None,
                 ent["verdict"] = "official"
                 ent["basis"] = f"depot-manifest:{ref['depot']}/{ref['manifest_id']}"
                 if is_pe and kb is None:
-                    # 地址绑定构建：PE 只认 known-builds 登记过的 SHA-256
+                    # Address-bound builds: a PE counts only if its SHA-256 is registered in known-builds
                     ent["verdict"] = "unregistered"
-                    ent["detail"] = ("Steam 新构建，未登记：与 Steam 清单一致但 SHA-256 不在 known-builds.tsv；"
-                                     "确认后去 PR 登记 known-builds.tsv 与 shared/builds.tsv")
+                    ent["detail"] = ("Steam new build, not registered: matches the Steam manifest but its SHA-256 is not in known-builds.tsv; "
+                                     "once confirmed, register it in known-builds.tsv and shared/builds.tsv via a PR")
                 elif kb is not None:
                     ent["basis"] += "+known-builds"
             else:
                 ent["verdict"] = "modified"
                 ent["basis"] = f"depot-manifest:{ref['depot']}/{ref['manifest_id']}"
-                ent["detail"] = (f"SHA1 / 大小与清单不符（清单 {ref['sha_content'].hex()}，"
-                                 f"{ref['size']} 字节）")
+                ent["detail"] = (f"SHA1 / size differs from the manifest (manifest {ref['sha_content'].hex()}, "
+                                 f"{ref['size']} bytes)")
                 if kb is not None:
-                    # 文件本身是已知正版，只是本机 Steam 清单是别的构建
+                    # The file itself is a known genuine build; only the local Steam manifest is for another build
                     ent["verdict"] = "official"
                     ent["basis"] = "known-builds"
-                    ent["detail"] = (f"与本机 Steam 清单不符但匹配 known-builds（buildid "
-                                     f"{kb.get('steam_buildid')}）")
+                    ent["detail"] = (f"differs from the local Steam manifest but matches known-builds (buildid "
+                                     f"{kb.get('steam_buildid')})")
             ent["expected_sha1"] = ref["sha_content"].hex()
             ent["expected_size"] = ref["size"]
         elif kb is not None:
@@ -578,25 +578,25 @@ def verify(game_dir, quick: bool = False, steam_root=None, manifests=None,
         elif mod.lower() in known_modules:
             ent["verdict"] = "modified"
             ent["basis"] = "known-builds"
-            ent["detail"] = "SHA-256 不匹配 known-builds 里任何一个已知正版"
+            ent["detail"] = "SHA-256 matches none of the known genuine builds in known-builds"
         elif have_manifest:
             ent["verdict"] = "modified" if not any_encrypted else "unknown"
             ent["basis"] = "depot-manifest"
-            ent["detail"] = ("Steam 清单里没有此文件" if not any_encrypted
-                             else "清单文件名加密，按 sha_filename 找不到此文件")
+            ent["detail"] = ("not in the Steam manifest" if not any_encrypted
+                             else "manifest file names are encrypted; this file was not found by sha_filename")
         else:
             ent["verdict"] = "unknown"
-            ent["detail"] = "无 Steam 清单，known-builds 也没有此模块"
+            ent["detail"] = "no Steam manifest, and known-builds has no entry for this module"
         if is_pe and ent["verdict"] == "modified" and ent.get("pe"):
             pi = ent["pe"]
             if (mod.lower(), pi["TimeDateStamp"].upper()) in known_ts and not pi["has_bind"]:
-                ent["detail"] += "；时间戳与正版相同但哈希不同（疑似 Steamless 脱壳或打过补丁）"
+                ent["detail"] += "; same timestamp as the genuine build but different hash (probably unpacked by Steamless or patched)"
             elif pi["has_bind"]:
-                ent["detail"] += "；带 SteamStub .bind 节"
+                ent["detail"] += "; has a SteamStub .bind section"
 
-    # 第三方文件
+    # Third-party files
     res["third_party"] = scan_third_party(game_dir, manifest_top_names)
-    # 清单里有但被替换的 steam_api64.dll（CreamAPI 特征）
+    # steam_api64.dll that is in the manifest but was replaced (a CreamAPI sign)
     if have_manifest:
         for api in ("steam_api64.dll", "steam_api.dll"):
             ref = by_name.get(api)
@@ -605,13 +605,13 @@ def verify(game_dir, quick: bool = False, steam_root=None, manifests=None,
                 _, s1, _ = hash_file(p, progress=False)
                 if s1 != ref["sha_content"].hex():
                     orig = game_dir / (api[:-4] + "_o.dll")
-                    detail = "哈希与 Steam 清单不符（被替换）"
+                    detail = "hash differs from the Steam manifest (replaced)"
                     if orig.is_file() and hash_file(orig, progress=False)[1] == ref["sha_content"].hex():
-                        detail += f"；{orig.name} 与清单原版一致"
-                    res["third_party"].append({"name": api, "kind": "file", "origin": "CreamAPI / Steam 模拟器",
+                        detail += f"; {orig.name} matches the manifest original"
+                    res["third_party"].append({"name": api, "kind": "file", "origin": "CreamAPI / Steam emulator",
                                                "detail": detail})
 
-    # 汇总
+    # Summary
     vs = [f["verdict"] for f in res["files"]]
     if any(v in ("modified", "missing") for v in vs):
         verdict, code = "unofficial", EXIT_UNOFFICIAL
@@ -637,8 +637,8 @@ class UnofficialInstallError(RuntimeError):
 
 
 def require_official(game_dir, modules, allow_unofficial: bool = False, **kw) -> dict:
-    """生成前的闸门：只核对 modules（如 ['EDF.dll']），不是官方就抛 UnofficialInstallError。
-    allow_unofficial=True 时只往 stderr 警告并返回结果（结果里 verdict 照实记录）。"""
+    """Pre-generation gate: check only `modules` (e.g. ['EDF.dll']); raise UnofficialInstallError if not official.
+    With allow_unofficial=True it only warns on stderr and returns the result (the verdict is recorded as is)."""
     kw.setdefault("progress", True)
     tool = kw.pop("tool", None)
     res = verify(game_dir, quick=False, modules=tuple(modules), **kw)
@@ -646,27 +646,27 @@ def require_official(game_dir, modules, allow_unofficial: bool = False, **kw) ->
                    "argv": list(sys.argv)}
     res["unofficial_allowed"] = False
     if res["verdict"] != "official":
-        bad = "; ".join(f"{f['module']}={f['verdict']}" + (f"（{f['detail']}）" if f["detail"] else "")
+        bad = "; ".join(f"{f['module']}={f['verdict']}" + (f" ({f['detail']})" if f["detail"] else "")
                         for f in res["files"] if f["verdict"] != "official")
-        msg = f"游戏文件不是可确认的官方原版：{bad or res['verdict']}"
+        msg = f"game files are not a confirmable official original: {bad or res['verdict']}"
         if res["verdict"] == "unregistered":
             msg += f"\n{REGISTER_HINT}"
         if not allow_unofficial:
             raise UnofficialInstallError(msg, res)
         res["unofficial_allowed"] = True
-        print(f"[verify_install] 警告（--allow-unofficial）：{msg}", file=sys.stderr)
+        print(f"[verify_install] warning (--allow-unofficial): {msg}", file=sys.stderr)
     else:
         basis = ", ".join(f"{f['module']}←{f['basis']}" for f in res["files"])
-        print(f"[verify_install] 官方原版：{basis}", file=sys.stderr)
+        print(f"[verify_install] official original: {basis}", file=sys.stderr)
     return res
 
 
-REGISTER_HINT = ("这是 Steam 清单认可、但仓库还没登记的新构建：确认无误后发 PR 把它登记进 known-builds.tsv "
-                 "与 shared/builds.tsv；在那之前只能用 --allow-unofficial 放行（产物会被标为未登记构建）。")
+REGISTER_HINT = ("This is a new build accepted by the Steam manifest but not yet registered in the repository: once confirmed, open a PR registering it in known-builds.tsv "
+                 "and shared/builds.tsv; until then it can only be let through with --allow-unofficial (the output will be marked as an unregistered build).")
 
 
 def _utf8_stderr() -> None:
-    """闸门 / 警告的中文写到 stderr：管道里按 UTF-8 输出（控制台本来就走宽字符）。"""
+    """Write gate / warning text to stderr as UTF-8 in pipes (the console already uses wide characters)."""
     try:
         sys.stderr.reconfigure(encoding="utf-8", errors="replace")
     except (AttributeError, ValueError):
@@ -675,20 +675,20 @@ def _utf8_stderr() -> None:
 
 def gate_or_exit(parser, game_dir, modules, allow_unofficial: bool = False, tool: str | None = None,
                  **kw) -> dict:
-    """命令行脚本用：require_official，不通过就 parser.exit（退出码 2 / 3）并提示 --allow-unofficial。"""
+    """For command-line scripts: require_official; if it fails, parser.exit (exit code 2 / 3) with a hint about --allow-unofficial."""
     _utf8_stderr()
     try:
         return require_official(game_dir, modules, allow_unofficial=allow_unofficial, tool=tool, **kw)
     except UnofficialInstallError as e:
         parser.exit(e.result.get("exit_code") or EXIT_UNOFFICIAL,
-                    f"{e}\n确认要用这份文件生成时加 --allow-unofficial（产物的 provenance.json 会记下）。\n")
+                    f"{e}\nAdd --allow-unofficial if you really want to generate from these files (it is recorded in the output's provenance.json).\n")
 
 
 PROVENANCE_NAME = "provenance.json"
 
 
 def provenance_path(output: Path) -> Path:
-    """产物是目录 → <目录>/provenance.json；产物是单个文件 → <文件名>.provenance.json。"""
+    """Output is a directory -> <dir>/provenance.json; output is a single file -> <file name>.provenance.json."""
     output = Path(output)
     return output / PROVENANCE_NAME if output.is_dir() else output.with_name(output.name + "." + PROVENANCE_NAME)
 
@@ -710,21 +710,21 @@ def read_provenance(output: Path) -> dict | None:
 
 def provenance_warnings(provenance: dict | None = None, image_hashes: dict | None = None,
                         known_builds_path: Path = KNOWN_BUILDS_TSV) -> list[str]:
-    """查询命令用：产物来源不是 known-builds 里的正版，或 provenance 标记了非官方 → 警告文字列表。
-    image_hashes：{module: sha256}（例如 vanilla.sqlite 的 image 表）。"""
+    """For query commands: the output does not come from a genuine build in known-builds, or provenance marks it unofficial -> list of warning texts.
+    image_hashes: {module: sha256} (e.g. the image table of vanilla.sqlite)."""
     out = []
     known = {r["sha256"]: r for r in load_known_builds(known_builds_path) if r.get("sha256")}
     for module, sha in sorted((image_hashes or {}).items()):
         if (sha or "").lower() not in known:
-            out.append(f"{module} SHA-256 {sha} 不在 known-builds.tsv（不是已知官方构建）")
+            out.append(f"{module} SHA-256 {sha} is not in known-builds.tsv (not a known official build)")
     if provenance:
         if provenance.get("verdict") != "official":
-            out.append(f"生成时判定为 {_OVERALL_ZH.get(provenance.get('verdict'), provenance.get('verdict'))}"
-                       + ("，用 --allow-unofficial 强行放行" if provenance.get("unofficial_allowed")
+            out.append(f"judged at generation time as {_OVERALL_EN.get(provenance.get('verdict'), provenance.get('verdict'))}"
+                       + (", forced through with --allow-unofficial" if provenance.get("unofficial_allowed")
                           or (provenance.get("gate") or {}).get("allow_unofficial") else ""))
         for f in provenance.get("files", []):
             if f.get("sha256") and f["sha256"].lower() not in known and not (image_hashes or {}).get(f["module"]):
-                out.append(f"{f['module']} SHA-256 {f['sha256']} 不在 known-builds.tsv")
+                out.append(f"{f['module']} SHA-256 {f['sha256']} is not in known-builds.tsv")
     return out
 
 
@@ -733,77 +733,77 @@ def print_provenance_warnings(warnings: list[str], stream=None) -> None:
         _utf8_stderr()
         stream = sys.stderr
     for w in warnings:
-        print(f"警告：产物来源不是已知官方构建：{w}", file=stream, flush=True)
+        print(f"warning: the output does not come from a known official build: {w}", file=stream, flush=True)
 
 
 # ---------------------------------------------------------------------------
-# 输出
+# Output
 # ---------------------------------------------------------------------------
 
-_VERDICT_ZH = {"official": "官方", "modified": "被改 / 不符", "missing": "缺失", "unchecked": "未核对",
-               "unknown": "无依据", "unregistered": "Steam 新构建，未登记"}
-_OVERALL_ZH = {"official": "官方原版", "unofficial": "非官方或被改", "undecided": "无法判定",
-               "unregistered": "Steam 新构建，未登记"}
+_VERDICT_EN = {"official": "official", "modified": "modified / mismatch", "missing": "missing", "unchecked": "not checked",
+               "unknown": "no basis", "unregistered": "Steam new build, not registered"}
+_OVERALL_EN = {"official": "official original", "unofficial": "unofficial or modified", "undecided": "undecided",
+               "unregistered": "Steam new build, not registered"}
 
 
 def overall_text(res: dict) -> str:
-    """总判定的中文。--quick 下 CPK 没算哈希，官方只说到 PE 为止。"""
+    """Overall verdict as text. Under --quick the CPKs are not hashed, so "official" only goes as far as the PEs."""
     if res.get("verdict") == "official" and any(f["verdict"] == "unchecked" for f in res.get("files", [])):
-        return "PE 官方，CPK 未核对"
-    return _OVERALL_ZH.get(res.get("verdict"), res.get("verdict"))
+        return "PEs official, CPKs not checked"
+    return _OVERALL_EN.get(res.get("verdict"), res.get("verdict"))
 
 
 def format_summary(res: dict) -> str:
     out = []
-    out.append(f"游戏目录：{res['game_dir']}")
+    out.append(f"Game directory: {res['game_dir']}")
     st = res.get("steam") or {}
     if st.get("appmanifest"):
-        out.append(f"Steam appmanifest：{st['appmanifest']}（buildid {st.get('buildid')}）")
+        out.append(f"Steam appmanifest: {st['appmanifest']} (buildid {st.get('buildid')})")
     for m in st.get("manifests", []):
-        out.append(f"  depot {m['depot']} 清单 {m['manifest_id']}：{m['files']} 个条目"
-                   + ("，文件名加密" if m["filenames_encrypted"] else ""))
+        out.append(f"  depot {m['depot']} manifest {m['manifest_id']}: {m['files']} entries"
+                   + (", file names encrypted" if m["filenames_encrypted"] else ""))
     if not st.get("manifests"):
-        out.append("Steam depot 清单：无（回退 known-builds.tsv）")
-    out.append("核心文件：")
+        out.append("Steam depot manifest: none (falling back to known-builds.tsv)")
+    out.append("Core files:")
     for f in res["files"]:
-        line = f"  {f['module']:<12} {_VERDICT_ZH.get(f['verdict'], f['verdict'])}"
+        line = f"  {f['module']:<12} {_VERDICT_EN.get(f['verdict'], f['verdict'])}"
         if f.get("basis"):
-            line += f"  依据 {f['basis']}"
+            line += f"  basis {f['basis']}"
         if f.get("sha1"):
             line += f"  sha1 {f['sha1']}"
         if f.get("detail"):
             line += f"  {f['detail']}"
         out.append(line)
     if res["missing_from_install"]:
-        out.append(f"清单里有但目录里缺（{len(res['missing_from_install'])}）：")
+        out.append(f"In the manifest but missing from the directory ({len(res['missing_from_install'])}):")
         out.extend(f"  {n}" for n in res["missing_from_install"][:50])
     if res["size_mismatch"]:
-        out.append(f"大小与清单不符（{len(res['size_mismatch'])}，仅警告）：")
-        out.extend(f"  {s['name']}：清单 {s['expected']}，实际 {s['actual']}" for s in res["size_mismatch"][:50])
+        out.append(f"Size differs from the manifest ({len(res['size_mismatch'])}, warning only):")
+        out.extend(f"  {s['name']}: manifest {s['expected']}, actual {s['actual']}" for s in res["size_mismatch"][:50])
     if res["third_party"]:
-        out.append(f"第三方 / 清单外文件（{len(res['third_party'])}，仅警告）：")
+        out.append(f"Third-party / files outside the manifest ({len(res['third_party'])}, warning only):")
         out.extend(f"  {t['name']}{'/' if t['kind'] == 'dir' else ''}  [{t['origin']}] {t['detail']}".rstrip()
                    for t in res["third_party"])
     for w in res["warnings"]:
-        out.append(f"警告：{w}")
-    out.append(f"判定：{overall_text(res)}（退出码 {res['exit_code']}）")
+        out.append(f"Warning: {w}")
+    out.append(f"Verdict: {overall_text(res)} (exit code {res['exit_code']})")
     if res["verdict"] == "unregistered":
         out.append(REGISTER_HINT)
     return "\n".join(out)
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="核对 EDF6 安装是否为官方原版")
+    ap = argparse.ArgumentParser(description="Check whether the EDF6 install is the official original build")
     ap.add_argument("game_dir")
-    ap.add_argument("--quick", action="store_true", help="只核 PE（EDF.dll / EDF6.exe），CPK 标为未核对")
-    ap.add_argument("--json", metavar="PATH", help="写 provenance JSON")
-    ap.add_argument("--steam-root", metavar="DIR", help="Steam 根目录（含 steamapps/ 与 depotcache/）")
-    ap.add_argument("--manifest", metavar="FILE", action="append", help="显式指定 depot 清单，可多次")
+    ap.add_argument("--quick", action="store_true", help="check only the PEs (EDF.dll / EDF6.exe); CPKs are marked not checked")
+    ap.add_argument("--json", metavar="PATH", help="write provenance JSON")
+    ap.add_argument("--steam-root", metavar="DIR", help="Steam root directory (containing steamapps/ and depotcache/)")
+    ap.add_argument("--manifest", metavar="FILE", action="append", help="depot manifest to use explicitly; may be repeated")
     ap.add_argument("--known-builds", metavar="TSV", default=str(KNOWN_BUILDS_TSV))
     ap.add_argument("--module", action="append", metavar="NAME",
-                    help="只核对这些文件（可多次；默认 EDF.dll EDF6.exe 与 4 个 CPK）")
+                    help="check only these files (may be repeated; default EDF.dll EDF6.exe and the 4 CPKs)")
     ap.add_argument("--allow-unofficial", action="store_true",
-                    help="只在 JSON 里记下调用方放行了非官方文件；退出码照实返回")
+                    help="only record in the JSON that the caller let unofficial files through; the exit code is returned as is")
     args = ap.parse_args(argv)
     try:
         sys.stdout.reconfigure(encoding="utf-8")

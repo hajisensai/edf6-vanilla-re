@@ -1,6 +1,6 @@
-"""地址清单计算（edf6re_lib/addresses.py）的测试，全部用合成数据。
+"""Tests for address list computation (edf6re_lib/addresses.py); all use synthetic data.
 
-运行：python -B -m unittest discover -s tests -v
+Run: python -B -m unittest discover -s tests -v
 """
 from __future__ import annotations
 

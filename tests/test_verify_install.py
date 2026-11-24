@@ -1,6 +1,6 @@
-"""verify_install.py 的单元测试：合成 depot manifest 与临时目录，不依赖本机游戏。
+"""Unit tests for verify_install.py: synthetic depot manifests and temporary directories; no dependency on the local game.
 
-运行：python -B -m unittest discover -s tests -v
+Run: python -B -m unittest discover -s tests -v
 """
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import verify_install as vi  # noqa: E402
 
 
-# ---- 最小 protobuf 编码（只为造测试数据） ----
+# ---- Minimal protobuf encoder (only for building test data) ----
 
 def _varint(n: int) -> bytes:
     out = bytearray()
@@ -242,10 +242,10 @@ class VerifyTests(unittest.TestCase):
         self.assertEqual(mods["Root.cpk"]["verdict"], "unchecked")
         self.assertIsNone(mods["Root.cpk"]["sha1"])
         self.assertEqual(res["exit_code"], vi.EXIT_OFFICIAL)
-        # 汇总不能说成「官方原版」：CPK 根本没算哈希
-        self.assertIn("判定：PE 官方，CPK 未核对（退出码 0）", vi.format_summary(res))
-        self.assertNotIn("官方原版", vi.format_summary(res))
-        self.assertIn("判定：官方原版", vi.format_summary(fx.verify()))
+        # The summary must not say "official original": the CPKs were never hashed
+        self.assertIn("Verdict: PEs official, CPKs not checked (exit code 0)", vi.format_summary(res))
+        self.assertNotIn("official original", vi.format_summary(res))
+        self.assertIn("Verdict: official original", vi.format_summary(fx.verify()))
 
     def test_modified_cpk_detected(self):
         fx = Fixture(self.tmp)
@@ -272,9 +272,9 @@ class VerifyTests(unittest.TestCase):
         self.assertEqual(origins["winmm.dll"], "EDFModLoader")
         self.assertIn("Steamless", origins["EDF6.exe.bak"])
         api = [t for t in res["third_party"] if t["name"] == "steam_api64.dll"][0]
-        self.assertIn("steam_api64_o.dll 与清单原版一致", api["detail"])
+        self.assertIn("steam_api64_o.dll matches the manifest original", api["detail"])
         self.assertEqual(res["size_mismatch"][0]["name"], "steam_api64.dll")
-        # 第三方文件只警告不阻断
+        # Third-party files only warn, they do not block
         self.assertEqual(res["exit_code"], vi.EXIT_OFFICIAL)
 
     def test_missing_target_is_unofficial(self):
@@ -288,18 +288,18 @@ class VerifyTests(unittest.TestCase):
         fx = Fixture(self.tmp, encrypted=True)
         res = fx.verify(quick=True)
         self.assertEqual(_by_module(res)["EDF.dll"]["verdict"], "official")
-        self.assertTrue(any("文件名已加密" in w for w in res["warnings"]))
-        self.assertEqual(res["missing_from_install"], [])  # 无法逐名核对
+        self.assertTrue(any("file names are encrypted" in w for w in res["warnings"]))
+        self.assertEqual(res["missing_from_install"], [])  # cannot check by name
 
     def test_encrypted_no_cross_file_sha1(self):
         fx = Fixture(self.tmp, encrypted=True)
-        # 文件名加密时只按 sha_filename 找条目：把另一个正版文件的内容放到这个名字下不能算官方
+        # With encrypted file names entries are found only by sha_filename: putting another genuine file's content under this name must not count as official
         (fx.game / "Chunk01.cpk").write_bytes(fx.cpk["Chunk02.cpk"])
         res = fx.verify(modules=("Chunk01.cpk",))
         f = _by_module(res)["Chunk01.cpk"]
         self.assertEqual(f["verdict"], "modified", f)
         self.assertEqual(res["exit_code"], vi.EXIT_UNOFFICIAL)
-        # 改名后 sha_filename 找不到条目：没有逐名依据，也不能靠 SHA1 集合判官方
+        # After a rename sha_filename finds no entry: no per-name basis, and a SHA1 set must not be used to judge official
         (fx.game / "Root.cpk").rename(fx.game / "Renamed.cpk")
         res = fx.verify(modules=("Renamed.cpk",))
         f = _by_module(res)["Renamed.cpk"]
@@ -314,17 +314,17 @@ class VerifyTests(unittest.TestCase):
 
     def test_manifest_match_but_unregistered_pe(self):
         fx = Fixture(self.tmp)
-        fx.write_known_builds({"EDF6.exe": fx.exe})   # EDF.dll 不在 known-builds
+        fx.write_known_builds({"EDF6.exe": fx.exe})   # EDF.dll is not in known-builds
         res = fx.verify(quick=True)
         f = _by_module(res)["EDF.dll"]
         self.assertEqual(f["verdict"], "unregistered", f)
-        self.assertIn("Steam 新构建，未登记", f["detail"])
+        self.assertIn("Steam new build, not registered", f["detail"])
         self.assertEqual(_by_module(res)["EDF6.exe"]["verdict"], "official")
         self.assertEqual((res["verdict"], res["exit_code"]), ("unregistered", vi.EXIT_UNDECIDED))
         summary = vi.format_summary(res)
-        self.assertIn("判定：Steam 新构建，未登记（退出码 3）", summary)
+        self.assertIn("Verdict: Steam new build, not registered (exit code 3)", summary)
         self.assertIn("shared/builds.tsv", summary)
-        # 闸门：默认拒绝（退出码 3），--allow-unofficial 放行并提示去登记
+        # Gate: refuses by default (exit code 3); --allow-unofficial lets it through and hints to register
         with self.assertRaises(vi.UnofficialInstallError) as cm:
             vi.require_official(fx.game, ["EDF.dll"], known_builds_path=fx.kb, progress=False)
         self.assertEqual(cm.exception.result["exit_code"], vi.EXIT_UNDECIDED)
@@ -336,7 +336,7 @@ class VerifyTests(unittest.TestCase):
 
     def test_known_builds_sha_must_match_module(self):
         fx = Fixture(self.tmp, write_acf=False)
-        # EDF6.exe 的正版内容放在 EDF.dll 名下：sha256 在 known-builds 里，但模块名不对
+        # Genuine EDF6.exe content under the EDF.dll name: the sha256 is in known-builds, but the module name is wrong
         (fx.game / "EDF.dll").write_bytes(fx.exe)
         f = _by_module(fx.verify(modules=("EDF.dll",)))["EDF.dll"]
         self.assertEqual(f["verdict"], "modified", f)
@@ -345,7 +345,7 @@ class VerifyTests(unittest.TestCase):
         fx = Fixture(self.tmp, write_acf=False)
         res = fx.verify(quick=True)
         self.assertEqual(res["steam"]["manifests"], [])
-        # 无 acf：回退 known-builds，PE 官方
+        # No acf: fall back to known-builds, PEs official
         self.assertEqual(_by_module(res)["EDF.dll"]["basis"], "known-builds")
         res = fx.verify(quick=True, manifests=[fx.root / "depotcache" / "2291062_123456789.manifest"])
         self.assertEqual(_by_module(res)["EDF.dll"]["basis"], "depot-manifest:2291062/123456789+known-builds")
@@ -361,14 +361,14 @@ class VerifyTests(unittest.TestCase):
         (game / "EDF.dll").write_bytes(fx.dll)
         res = vi.verify(game, modules=("EDF.dll",), known_builds_path=fx.kb, progress=False)
         self.assertEqual(res["verdict"], "official")
-        # 改一个字节 → 非官方，并提示时间戳相同
+        # Change one byte -> unofficial, with a note that the timestamp is the same
         b = bytearray(fx.dll)
         b[-1] ^= 1
         (game / "EDF.dll").write_bytes(bytes(b))
         res = vi.verify(game, modules=("EDF.dll",), known_builds_path=fx.kb, progress=False)
         f = _by_module(res)["EDF.dll"]
         self.assertEqual(f["verdict"], "modified")
-        self.assertIn("时间戳与正版相同", f["detail"])
+        self.assertIn("same timestamp as the genuine build", f["detail"])
         self.assertEqual(res["exit_code"], vi.EXIT_UNOFFICIAL)
 
     def test_no_reference_is_undecided(self):

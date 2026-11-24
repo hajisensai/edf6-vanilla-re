@@ -1,7 +1,7 @@
-"""generate.py 步骤编排的测试：计划顺序、模块筛选、前置检查、--resume、失败续跑命令、--dry-run。
+"""Tests for generate.py step orchestration: plan order, module filtering, precondition checks, --resume, the failure resume command, --dry-run.
 
-步骤动作换成合成的进程内函数，不调用 Ghidra，也不读游戏文件。
-运行：python -B -m unittest discover -s tests -v
+Step actions are replaced by synthetic in-process functions; Ghidra is not called and game files are not read.
+Run: python -B -m unittest discover -s tests -v
 """
 from __future__ import annotations
 

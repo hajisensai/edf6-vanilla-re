@@ -1,6 +1,6 @@
-"""BVM 容器解析 / 反汇编 / 栈检查（edf6re_lib/bvm41.py）的测试，全部用合成脚本，不读游戏文件。
+"""Tests for BVM container parsing / disassembly / stack checking (edf6re_lib/bvm41.py); all use synthetic scripts and never read game files.
 
-运行：python -B -m unittest discover -s tests -v
+Run: python -B -m unittest discover -s tests -v
 """
 from __future__ import annotations
 

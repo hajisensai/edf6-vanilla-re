@@ -1,6 +1,6 @@
-"""生成前闸门（require_official / --allow-unofficial / provenance.json）与查询警告的测试。
+"""Tests for the pre-generation gate (require_official / --allow-unofficial / provenance.json) and query warnings.
 
-全部用合成数据，不依赖本机游戏。运行：python -B -m unittest discover -s tests -v
+All use synthetic data and do not depend on the local game. Run: python -B -m unittest discover -s tests -v
 """
 from __future__ import annotations
 
@@ -87,13 +87,13 @@ class HelperTests(TempCase):
     def test_cli_module_and_allow_unofficial(self):
         fx = Fixture(self.tmp)
         (fx.game / "EDF6.exe").write_bytes(b"MZ changed")
-        out = self.tmp / "nested" / "dir" / "p.json"   # 父目录不存在也要能写
+        out = self.tmp / "nested" / "dir" / "p.json"   # must be writable even if the parent directory does not exist
         rc = vi.main([str(fx.game), "--module", "EDF.dll", "--json", str(out), "--known-builds", str(fx.kb)])
         self.assertEqual(rc, 0)
         self.assertEqual([f["module"] for f in json.loads(out.read_text(encoding="utf-8"))["files"]], ["EDF.dll"])
         rc = vi.main([str(fx.game), "--quick", "--allow-unofficial", "--json", str(out),
                       "--known-builds", str(fx.kb)])
-        self.assertEqual(rc, vi.EXIT_UNOFFICIAL)   # 放行不改退出码，只记录
+        self.assertEqual(rc, vi.EXIT_UNOFFICIAL)   # letting it through does not change the exit code, only records it
         data = json.loads(out.read_text(encoding="utf-8"))
         self.assertTrue(data["unofficial_allowed"])
         self.assertTrue(data["gate"]["allow_unofficial"])
@@ -101,13 +101,13 @@ class HelperTests(TempCase):
 
 class ScriptGateTests(TempCase):
     def test_missions_refuses_unofficial(self):
-        # known-builds.tsv 收录了 4 个 CPK：哈希对不上即「被改」，退出码 2，且不建产物目录
+        # known-builds.tsv lists 4 CPKs: a hash mismatch means "modified", exit code 2, and no output directory is created
         game = self.fake_game(files=("Root.cpk", "Chunk01.cpk", "Chunk02.cpk", "DX11.cpk"))
         out = self.tmp / "missions-out"
         p = run(ROOT / "missions.py", game, "--output", out)
         self.assertEqual(p.returncode, vi.EXIT_UNOFFICIAL, p.stderr)
         self.assertIn("--allow-unofficial", p.stderr)
-        self.assertFalse(out.exists(), "闸门没过时不应建产物目录")
+        self.assertFalse(out.exists(), "no output directory should be created when the gate does not pass")
 
     def test_vanilla_build_refuses_unofficial(self):
         game = self.fake_game()
@@ -140,13 +140,13 @@ class VanillaQueryWarningTests(TempCase):
     def test_official_db_no_warning(self):
         p = self.summary(self.make_db(OFFICIAL_EDF_SHA))
         self.assertEqual(p.returncode, 0, p.stderr)
-        self.assertNotIn("警告", p.stderr)
-        json.loads(p.stdout)   # stdout 仍是纯 JSON
+        self.assertNotIn("warning", p.stderr)
+        json.loads(p.stdout)   # stdout is still pure JSON
 
     def test_unknown_build_warns(self):
         p = self.summary(self.make_db("ef" * 32))
         self.assertEqual(p.returncode, 0, p.stderr)
-        self.assertIn("警告", p.stderr.splitlines()[0])
+        self.assertIn("warning", p.stderr.splitlines()[0])
         self.assertIn("known-builds", p.stderr)
 
     def test_unofficial_provenance_warns(self):
@@ -157,7 +157,7 @@ class VanillaQueryWarningTests(TempCase):
         self.assertIn("--allow-unofficial", p.stderr)
 
 
-@unittest.skipUnless(shutil.which("powershell"), "需要 Windows PowerShell")
+@unittest.skipUnless(shutil.which("powershell"), "needs Windows PowerShell")
 class DecompileGateTests(TempCase):
     def test_decompile_stops_before_ghidra(self):
         game = self.fake_game()

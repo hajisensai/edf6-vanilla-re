@@ -1,20 +1,20 @@
-[English](README.en.md) | 中文
+English | [简体中文](README.zh-CN.md)
 
-# 笔记写法
+# How to write notes
 
-一个子系统一篇 Markdown，文件名用英文短横线，如 `helicopter-input.md`。建议结构：
+One Markdown file per subsystem, with a file name in English using hyphens, such as `helicopter-input.md`. Suggested structure:
 
 ```
-# <子系统>（build steam-17055427）
+# <subsystem> (build steam-17055427)
 
-## 结论
-- 0x006543A0 VehicleHelicopterBase::UpdateInput：每帧把座位摇杆写进 veh+0x1540 输入块。
+## Conclusions
+- 0x006543A0 VehicleHelicopterBase::UpdateInput: every frame writes the seat joystick into the veh+0x1540 input block.
 
-## 怎么确认的
-- 断点 / 调用关系 / 字符串引用 / RTTI，写到别人能复核。
+## How it was confirmed
+- Breakpoints / call relationships / string references / RTTI, written so that others can verify.
 
-## 未解决
+## Unresolved
 ```
 
-- 只写自己的描述和 RVA；不贴伪代码或汇编。确需说明时可以放 ≤10 行**自己改写**的片段，并注明「改写」（lint 会拒绝超过 10 行的代码块）。
-- 新确认的函数名、字段同时补进 `shared/functions`、`shared/types`，笔记里引用它们即可。
+- Write only your own descriptions and RVAs; do not paste pseudocode or assembly. If you really need to illustrate something, you may include a snippet of at most 10 lines that you **rewrote yourself**, and mark it as "rewritten" (lint rejects code blocks longer than 10 lines).
+- Also add newly confirmed function names and fields to `shared/functions` and `shared/types`, and just reference them from the note.

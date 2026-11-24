@@ -53,7 +53,7 @@ STEPS = (
     ('missions', False, ('EDF.dll',), (), 'mission AC/BVM sources and BVM native usage from the CPKs -> missions/'),
     ('bvm', False, ('EDF.dll',), ('missions',), 'BVM native dispatcher probe and ABI index -> bvm-native/'),
     ('index', False, MODULES, ('db', 'pointers'), 'function_index.py: names and RVAs of every entry -> function-index/'),
-    ('report', False, MODULES, ('db',), 'vanilla.py verify plus counts -> 验证.md'),
+    ('report', False, MODULES, ('db',), 'vanilla.py verify plus counts -> VERIFICATION.md'),
 )
 STEP_NAMES = tuple(step[0] for step in STEPS)
 
@@ -280,8 +280,8 @@ class Pipeline:
             target = report.write(self.out, self.modules, verify_log.read_text(encoding='utf-8'))
             print(f'wrote {target}', file=step_log, flush=True)
         return Step('report', actions=[Action(f'vanilla.py verify -> {verify_log}', argv, log_name=verify_log),
-                                       Action(f'write {self.out / "验证.md"}', call=write)],
-                    clean=[self.out / '验证.md', verify_log])
+                                       Action(f'write {self.out / "VERIFICATION.md"}', call=write)],
+                    clean=[self.out / 'VERIFICATION.md', verify_log])
 
     def database(self):
         import contextlib
