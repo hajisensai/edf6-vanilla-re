@@ -140,6 +140,8 @@ steam-17055427	0x00E4D160	hknpWorld::castRay		confirmed	edf6-all-forces docs/ray
 steam-17055427	0x00E7E570	hknpMultithreadedSimulation::BuildCollideTasks		likely	edf6-all-forces docs/havok-mt-re.md: collide 任务由此构建	
 steam-17055427	0x00E82390	hknpMultithreadedSimulation::BuildSolveTasks		likely	edf6-all-forces docs/havok-mt-re.md: solve 任务由此构建	
 steam-17055427	0x010AB600	BVM_ExecuteInstruction		likely	reverse engineered: edf6-all-forces docs/edf5-online-re.md, dispatch table 0x010AC49C	migrated from function-labels.tsv
+steam-17055427	0x011009A0	SkinPalette_Update		likely	edf6-all-forces docs/perf-probe-re.md: LOD 绘制 0x01104100 的 0x01104131 每 pass 调一次，实机计数 M001 每帧约 92 次；逐骨算矩阵后 UpdateSubresource 整块上传	另有调用点 0x006C2C8A、0x01102F2E
+steam-17055427	0x01104100	Model_DrawLod		guess	edf6-all-forces docs/perf-probe-re.md: 每 pass 一次，入口先调 0x011009A0	
 steam-17055427	0x0111B420	Renderer_InitDevice		likely	edf6-all-forces docs/frame-pacing-re.md: 唯一调用者 0x011A33DF，经 0x012DAED0 建 D3D11 设备，设备存 renderer+0x80	
 steam-17055427	0x0111CC20	Renderer_WaitGpuFence		likely	edf6-all-forces docs/frame-pacing-re.md: 建事件、录一条 signal 命令，再用 0x00050E00 轮询 + Sleep(0) 忙等	超过 1 s 时顺带处理窗口消息
 steam-17055427	0x0111D890	Renderer_QueuePresent		likely	edf6-all-forces docs/unlimited-fps-re.md: 唯一调用者 0x011A309B，dl = SyncInterval；渲染线程 0x01118B45 调 Present(dl, 0)	
@@ -176,3 +178,4 @@ steam-17055427	0x011DFF90	CustomCharRigidBody_PreCollide		likely	edf6-all-forces
 steam-17055427	0x011E7E20	asCContext::ExecuteNext		confirmed	upstream source match: AngelScript 2.28.2 as_context.cpp, dispatch 0x011E7E93, caller 0x011E59B3	migrated from function-labels.tsv
 steam-17055427	0x011FD0D0	asGetLibraryVersion		confirmed	upstream source match: AngelScript 2.28.2, returns version string at 0x01AEBC00	migrated from function-labels.tsv
 steam-17055427	0x0130FE20	hknpThreadPool::ProcessTaskQueue		likely	edf6-all-forces docs/havok-mt-re.md: pool vtable 第 4 槽，worker 主循环	
+steam-17055427	0x01631790	Renderer_ReadOcclusionQuery		likely	edf6-all-forces docs/perf-probe-re.md: 唯一调用点 0x011E4244（Umbra Commander 结果循环）；取锁 renderer+0x29F0 后经 vt+0xE8 GetData（flags=0），al=已就绪；实机计数 M001 每帧约 11 次、从未未就绪	第 5 参数（栈字节）为等待标志，等待时最多重试 1 s

@@ -1,0 +1,7 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x0080	8	d3d_device	ID3D11Device*	likely	edf6-all-forces docs/frame-pacing-re.md: 0x0111B420 建设备后写入	
+steam-17055427	0x0088	8	d3d_immediate_context	ID3D11DeviceContext*	likely	edf6-all-forces docs/perf-probe-re.md: 0x0111B595 D3D11CreateDevice 的 ppImmediateContext	
+steam-17055427	0x0090	8	swap_chain	IDXGISwapChain*	likely	edf6-all-forces docs/perf-probe-re.md: 0x01118B45 call [rax+0x40] 即 Present；实机 QI 得 IDXGISwapChain	
+steam-17055427	0x00F0	8	dxgi_adapter	IDXGIAdapter*	guess	edf6-all-forces docs/perf-probe-re.md: 0x0111B65E QI IDXGIDevice 后 GetAdapter 写入；0x0111A64F 在它上面 EnumOutputs 建显示模式列表	设备适配器兼作输出适配器
+steam-17055427	0x00F8	8	dxgi_factory	IDXGIFactory*	guess	edf6-all-forces docs/perf-probe-re.md: 0x0111B420 内对适配器 GetParent 写入	
+steam-17055427	0x29F0	4	context_lock	u32	guess	edf6-all-forces docs/perf-probe-re.md: 0x01631790 lock cmpxchg 取得，失败 Sleep	
