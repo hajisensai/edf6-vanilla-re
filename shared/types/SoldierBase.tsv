@@ -3,8 +3,12 @@ steam-17055427	0x01D0	4	zoom_factor	float	likely	edf6-all-forces docs/zoom-re.md
 steam-17055427	0x031C	4	vehicle_mask	u32	likely	edf6-all-forces docs/all-classes-ride-re.md: 取 SGO game_object_vehicle_mask，0x005462D5 写入	
 steam-17055427	0x05D0	4	action_limit_bits	u32	likely	edf6-all-forces docs/fp-soldier-re.md: 动作状态进入时整体写入	
 steam-17055427	0x0711	1	proxy_support_state	u8	likely	edf6-all-forces docs/fp-soldier-re.md: 2=着地，约 20 处比较	
+steam-17055427	0x0860	?	body_model	AnimationModel	likely	edf6-all-forces docs/unlimited-fps-re.md: 0x00571E40 调 0x006BA950(h+0x860, ...)	基础骨骼实例在模型 +0xA0，即 h+0x900
 steam-17055427	0x1120	?	weapon_list	array	likely	edf6-all-forces docs/gravity-re.md: 16 字节一行 {Weapon*,ctrl*}，个数在 +0x1130	
 steam-17055427	0x1180	1	ragdoll_flag	u8	likely	edf6-all-forces docs/fp-soldier-re.md: 0x0056CCA0 置 1，0x0056D6B0 清 0	
 steam-17055427	0x1264	4	airborne_frames	int	likely	edf6-all-forces docs/fp-soldier-re.md: 0x00573F85 在 +0x711!=2 时 +1	
 steam-17055427	0x1540	8	vehicle_seat	ptr	likely	edf6-all-forces docs/fp-soldier-re.md: 座位指针 +0x1540	
+steam-17055427	0x1548	8	riding_vehicle	void*	likely	edf6-all-forces docs/unlimited-fps-re.md: 徒步判断为假时是所乘载具；载具的模型在 +0xE40、骨骼实例 +0xEE0、根矩阵 +0x60	
 steam-17055427	0x1550	16	vehicle_weak	weak_ptr	likely	edf6-all-forces docs/fp-soldier-re.md: 非 0 且 use count 非 0 即在车上，0x00570D2B	
+steam-17055427	0x1950	8	weapons	void**	likely	edf6-all-forces docs/unlimited-fps-re.md: 武器指针数组，个数在 +0x1960；每把武器的 AnimationModel 在 weapon+0xF30	
+steam-17055427	0x1960	4	weapon_count	i32	likely	edf6-all-forces docs/unlimited-fps-re.md: 与 +0x1950 的数组一起读	

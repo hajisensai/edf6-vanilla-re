@@ -140,6 +140,9 @@ steam-17055427	0x00E4D160	hknpWorld::castRay		confirmed	edf6-all-forces docs/ray
 steam-17055427	0x00E7E570	hknpMultithreadedSimulation::BuildCollideTasks		likely	edf6-all-forces docs/havok-mt-re.md: collide 任务由此构建	
 steam-17055427	0x00E82390	hknpMultithreadedSimulation::BuildSolveTasks		likely	edf6-all-forces docs/havok-mt-re.md: solve 任务由此构建	
 steam-17055427	0x010AB600	BVM_ExecuteInstruction		likely	reverse engineered: edf6-all-forces docs/edf5-online-re.md, dispatch table 0x010AC49C	migrated from function-labels.tsv
+steam-17055427	0x01100B90	SkeletonInstance_SetWorld		likely	edf6-all-forces docs/unlimited-fps-re.md: 把世界矩阵写进骨骼记录 0 的 +0xB0，置脏 inst+0xB0，再调 0x01100010 沿层级求各骨世界矩阵	士兵在 0x006BA9A2 以 h+0x60 调用
+steam-17055427	0x01100F10	SkeletonInstance_CopyPose		likely	edf6-all-forces docs/unlimited-fps-re.md: 把每个骨骼记录 +0xB0 的世界矩阵原样拷进 [inst+0x30] 的 pose 数组；26 个调用点都在对象的 tick 更新里	渲染线程直接读这个数组
+steam-17055427	0x0111B220	Renderer_CreateSwapChain		likely	edf6-all-forces docs/frame-pacing-re.md: 调用者 0x0111B77B（设备初始化）与 0x0111C8EC（改模式重建）；把 renderer+0xA8 的描述拷到栈上，0x0111B340 调 IDXGIFactory::CreateSwapChain	原版描述：SwapEffect DISCARD、1 个缓冲、ALLOW_MODE_SWITCH
 steam-17055427	0x0111B420	Renderer_InitDevice		likely	edf6-all-forces docs/frame-pacing-re.md: 唯一调用者 0x011A33DF，经 0x012DAED0 建 D3D11 设备，设备存 renderer+0x80	
 steam-17055427	0x0111CC20	Renderer_WaitGpuFence		likely	edf6-all-forces docs/frame-pacing-re.md: 建事件、录一条 signal 命令，再用 0x00050E00 轮询 + Sleep(0) 忙等	超过 1 s 时顺带处理窗口消息
 steam-17055427	0x0111D890	Renderer_QueuePresent		likely	edf6-all-forces docs/unlimited-fps-re.md: 唯一调用者 0x011A309B，dl = SyncInterval；渲染线程 0x01118B45 调 Present(dl, 0)	
@@ -149,6 +152,7 @@ steam-17055427	0x011831F0	Input_TakeMouseDelta		likely	edf6-all-forces docs/unli
 steam-17055427	0x011832D0	Input_TakeWheel		likely	edf6-all-forces docs/unlimited-fps-re.md: 0x01188480 调用，cl=1 时返回并清零 0x021360C0	
 steam-17055427	0x0118A1B0	GameObject_Destroy		likely	edf6-all-forces docs/aircraft-re.md: 幂等；注销 0x020B2958 中的 shared_ptr	名字按功能概括
 steam-17055427	0x0118AFC0	SceneCamera_ctor		likely	edf6-all-forces docs/zoom-re.md: +0x20=+0x24=π/4	
+steam-17055427	0x0118DF40	Camera_Step		likely	edf6-all-forces docs/unlimited-fps-re.md: 只在 0x011995A6 调用，rcx = 镜头；是 System_Update 每个 tick 的视口循环里最后一个调用，排在各对象阶段之后	经镜头 vtable 槽 4 写 cam+0x220 世界矩阵与 cam+0x24 视野
 steam-17055427	0x0118DFF0	SceneCamera_BuildProjection		likely	edf6-all-forces docs/zoom-re.md: 读 cam+0x24 写 cam+0x1A0	
 steam-17055427	0x011945E0	Scene_CreateObject		confirmed	edf6-all-forces docs/airstrike-re.md: CreateObject(g,xf,sgo,InitParam)，多处调用点核对；decoy-blast-re.md 同	
 steam-17055427	0x01198DA0	System_Update		likely	edf6-all-forces docs/frame-pacing-re.md: 0x00705715 调用，[System+0xCE4]+=n/60	

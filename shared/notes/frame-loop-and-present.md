@@ -19,6 +19,13 @@
 - 0x0111CC20 Renderer_WaitGpuFence 是忙等：每次新建一个自动复位事件（0x00050D10），录一条 signal 命令，再用 0x00050E00（WaitForSingleObject 超时 0）加 Sleep(0) 轮询到事件置位。超过 1 s 后才顺带处理窗口消息。
 - 0x0111B420 Renderer_InitDevice（唯一调用者 0x011A33DF，参数 g_Renderer 0x02136FF0）：设备存在 renderer+0x80，交换链在 +0x90。它只为 GetAdapter 查询 IDXGIDevice1，从不调 SetMaximumFrameLatency，所以 DXGI 排队帧数是系统默认的 3。
 
+## 镜头步进、骨骼 pose 与交换链（2026-11-24 补充）
+
+- 镜头步进 0x0118DF40 只在 0x011995A6 调用。它是 System_Update 的 tick 循环里每个视口的最后一个调用，排在各对象阶段（系统 vtable 的 +0x38 / +0x30 / +0x20 / +0x40 / +0x28 / +0x48）之后，所以在它之后读到的是这个 tick 的最终状态。镜头的世界矩阵在 cam+0x220（行依次是右、上、前、位置），视野在 +0x24，跟随的士兵在 [cam+0x360]。
+- 渲染录制在 System_Update 开头、tick 步进之前：0x01198FA4 调 0x011978D0，各视口经 0x01197B50 调 0x0118DFF0，用 +0x220 和 +0x24 算视图矩阵。所以 n ≥ 1 帧画的是上一帧末的状态。
+- 骨骼实例（SkeletonInstance）：pose 数组 [inst+0x30] 由 0x01100F10 在对象的 tick 更新里写。渲染线程直接读这块对象内存，录制时不拷贝。帧末栅栏 0x011A305A 每帧都等渲染线程做完。士兵的身体是 h+0x860 的 AnimationModel，基础实例在 h+0x900；武器各自是独立的模型（weapon+0xF30）。
+- 交换链：0x0111B220 建，调用者是设备初始化 0x0111B77B 和改模式 0x0111C8EC。改模式是重建交换链，不调 ResizeBuffers。描述拷到栈 rsp+0x30 后，在 0x0111B340 调 IDXGIFactory::CreateSwapChain：rcx 是 renderer+0xF8 的工厂，rdx 是设备，r8 是描述，r9 是输出。原版是 blt 模型。Present 在渲染线程 0x01118B45 调用：flags 固定为 0（0x01118B39 的 xor r8d,r8d），SyncInterval 在 xmm0 的第 3 个 dword 里。
+
 ## 怎么确认的
 
 - 调用关系：直接调用点用 edf6-all-forces `tools/edfre.py` 的 callers / xrefs 枚举，每个「唯一调用者」都是全模块扫描的结果。
