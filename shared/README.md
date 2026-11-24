@@ -1,3 +1,5 @@
+[English](README.en.md) | 中文
+
 # shared/
 
 协作者共享的分析数据：函数名、全局变量名、结构体字段和中文笔记。格式、命名、置信度与证据要求见 [CONTRIBUTING.md](../CONTRIBUTING.md)，提交前跑 `python tools/lint_shared.py`。

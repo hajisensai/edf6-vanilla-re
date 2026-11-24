@@ -1,3 +1,5 @@
+[English](README.en.md) | 中文
+
 # EDF6 原版代码研究工具（edf6-vanilla-re）
 
 用**你自己的** Steam 版《地球防卫军 6》（EARTH DEFENSE FORCE 6）在本机生成原版代码的可读镜像：逐行汇编、Ghidra C 伪代码、按 RVA 查询的 SQLite 索引、AngelScript / BVM 任务脚本索引。另有一套大家共同维护的函数名、结构体字段和中文笔记。

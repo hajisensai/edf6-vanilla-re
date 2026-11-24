@@ -159,6 +159,10 @@ class TableTests(LintCase):
         self.assertError(report, 'unexpected entry in shared/')
         self.assertError(report, 'must not contain sub-directories')
 
+    def test_translated_readme_allowed(self):
+        self.write('shared/README.en.md', 'English\n')
+        self.assertNotIn('unexpected entry', '\n'.join(map(str, self.lint().errors)))
+
     def test_note_code_block_limit(self):
         body = '\n'.join(f'line {i}' for i in range(11))
         self.write('shared/notes/long.md', f'# x\n\n```c\n{body}\n```\n')

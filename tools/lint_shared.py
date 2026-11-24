@@ -351,7 +351,7 @@ def check_note_text(shown, text, report):
 
 
 def check_layout(shared, root, report):
-    allowed_top = {'builds.tsv', 'README.md', 'functions', 'data', 'types', 'notes'}
+    allowed_top = {'builds.tsv', 'README.md', 'README.en.md', 'functions', 'data', 'types', 'notes'}
     for path in sorted(shared.iterdir()):
         if path.name not in allowed_top:
             report.error(rel(path, root), 1, 'unexpected entry in shared/ (see CONTRIBUTING.md for the layout)')

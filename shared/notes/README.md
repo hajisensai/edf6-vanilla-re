@@ -1,3 +1,5 @@
+[English](README.en.md) | 中文
+
 # 笔记写法
 
 一个子系统一篇 Markdown，文件名用英文短横线，如 `helicopter-input.md`。建议结构：
