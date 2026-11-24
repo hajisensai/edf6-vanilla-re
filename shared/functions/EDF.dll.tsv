@@ -1,5 +1,9 @@
 build	rva	name	signature	confidence	evidence	notes
 steam-17055427	0x00050BC0	ScopedLock_EnterCriticalSection		likely	edf6-all-forces docs/havok-mt-re.md: EnterCriticalSection 的 scoped lock	名字按功能概括
+steam-17055427	0x00050D10	Event_CreateAutoReset		likely	edf6-all-forces docs/frame-pacing-re.md: 内调 CreateEventW，0x0111CC20 每次栅栏新建一个	
+steam-17055427	0x00050E00	Event_PollSignaled		likely	edf6-all-forces docs/frame-pacing-re.md: WaitForSingleObject(h, 0) 的包装，0x0111CCCC 与 0x0111CD49 调用	
+steam-17055427	0x00077320	InputManager_UpdateActionWrappers		likely	edf6-all-forces docs/unlimited-fps-re.md: 唯一每帧调用 0x007058C7，rcx+=0x5AE8 后跳到 0x0007CDC0	参数 edx = 本帧 tick 数 n
+steam-17055427	0x0007CDC0	ActionWrapperTable_Update		likely	edf6-all-forces docs/unlimited-fps-re.md: 4 名玩家各 146 个封装，逐个调 0x01182BC0	
 steam-17055427	0x000AB2C0	DevCmd_set_armor_count		likely	edf6-all-forces docs/loadout-re.md: 开发者命令处理函数	
 steam-17055427	0x000AC650	DevCmd_set_player_soldier		likely	edf6-all-forces docs/loadout-re.md: 开发者命令处理函数	
 steam-17055427	0x000AC9E0	DevCmd_set_weapon		likely	edf6-all-forces docs/loadout-re.md: 开发者命令处理函数	
@@ -107,6 +111,7 @@ steam-17055427	0x00695F10	Weapon_ZoomOff		likely	edf6-all-forces docs/zoom-re.md
 steam-17055427	0x00696310	Weapon_ToggleZoom		likely	edf6-all-forces docs/zoom-re.md: +0x780 翻转，+0x784=倍率	
 steam-17055427	0x00698570	Weapon_SecondaryFireDispatch		likely	edf6-all-forces docs/zoom-re.md: 按 +0x690 跳表分派	
 steam-17055427	0x006A8B50	Weapon_RadioContact::UpdateCall		likely	reverse engineered: edf6-all-forces docs/airstrike-re.md, calls at 0x006A8DFB and 0x006A8EC8	migrated from function-labels.tsv
+steam-17055427	0x00705530	Application_Update		likely	edf6-all-forces docs/unlimited-fps-re.md: 主循环每帧调一次，[r14] = dt、[r14+4] = tick 数 n；内调 System_Update 0x01198DA0	每帧推进共享随机数 0x01F54128
 steam-17055427	0x00705A60	Application_OnWorldStepBegin		likely	edf6-all-forces docs/mission-cycle-re.md: 只经 Application vtable 槽 0x017E91E0 调用	
 steam-17055427	0x0070E330	Script_FreeResourceGroup		confirmed	edf6-all-forces docs/mission-cycle-re.md: 声明字符串 0x017EAD70，0x0071D094 取地址注册	
 steam-17055427	0x0070F0B0	Script_Mission		likely	edf6-all-forces docs/mission-cycle-re.md: 首次调用时加载 mission.bvm	
@@ -135,6 +140,13 @@ steam-17055427	0x00E4D160	hknpWorld::castRay		confirmed	edf6-all-forces docs/ray
 steam-17055427	0x00E7E570	hknpMultithreadedSimulation::BuildCollideTasks		likely	edf6-all-forces docs/havok-mt-re.md: collide 任务由此构建	
 steam-17055427	0x00E82390	hknpMultithreadedSimulation::BuildSolveTasks		likely	edf6-all-forces docs/havok-mt-re.md: solve 任务由此构建	
 steam-17055427	0x010AB600	BVM_ExecuteInstruction		likely	reverse engineered: edf6-all-forces docs/edf5-online-re.md, dispatch table 0x010AC49C	migrated from function-labels.tsv
+steam-17055427	0x0111B420	Renderer_InitDevice		likely	edf6-all-forces docs/frame-pacing-re.md: 唯一调用者 0x011A33DF，经 0x012DAED0 建 D3D11 设备，设备存 renderer+0x80	
+steam-17055427	0x0111CC20	Renderer_WaitGpuFence		likely	edf6-all-forces docs/frame-pacing-re.md: 建事件、录一条 signal 命令，再用 0x00050E00 轮询 + Sleep(0) 忙等	超过 1 s 时顺带处理窗口消息
+steam-17055427	0x0111D890	Renderer_QueuePresent		likely	edf6-all-forces docs/unlimited-fps-re.md: 唯一调用者 0x011A309B，dl = SyncInterval；渲染线程 0x01118B45 调 Present(dl, 0)	
+steam-17055427	0x01182A00	ActionSource_Set		likely	edf6-all-forces docs/unlimited-fps-re.md: 写动作源 +0x48 值 / +0x4C 按住；0x01188738 / 0x01188756 写鼠标 X / Y	
+steam-17055427	0x01182BC0	ActionWrapper_Update		likely	edf6-all-forces docs/unlimited-fps-re.md: 清 +0x11/+0x12/+0x13 边沿后按源的变化重设，长按重复倒数减 n；全 EDF.dll 154 处调用	
+steam-17055427	0x011831F0	Input_TakeMouseDelta		likely	edf6-all-forces docs/unlimited-fps-re.md: 0x01188479 调用，dl=1 时拷出 0x01FEEE20 的 16 字节并重置为 0x01765B30	
+steam-17055427	0x011832D0	Input_TakeWheel		likely	edf6-all-forces docs/unlimited-fps-re.md: 0x01188480 调用，cl=1 时返回并清零 0x021360C0	
 steam-17055427	0x0118A1B0	GameObject_Destroy		likely	edf6-all-forces docs/aircraft-re.md: 幂等；注销 0x020B2958 中的 shared_ptr	名字按功能概括
 steam-17055427	0x0118AFC0	SceneCamera_ctor		likely	edf6-all-forces docs/zoom-re.md: +0x20=+0x24=π/4	
 steam-17055427	0x0118DFF0	SceneCamera_BuildProjection		likely	edf6-all-forces docs/zoom-re.md: 读 cam+0x24 写 cam+0x1A0	
@@ -157,6 +169,7 @@ steam-17055427	0x011B18F0	Havok_Body_SetLinearVelocity		likely	edf6-all-forces d
 steam-17055427	0x011B1930	Havok_Body_SetMass		likely	edf6-all-forces docs/gravity-re.md: 写槽 31 [+0xF8] 0x00E4FF50	
 steam-17055427	0x011B1960	Havok_Body_SetMotionType		likely	edf6-all-forces docs/gravity-re.md: 写槽 27 [+0xD8] 0x00E507F0	
 steam-17055427	0x011B1A00	Havok_Body_SetPosition		likely	edf6-all-forces docs/aircraft-re.md: SetPosition(body, vec4*) 包装	
+steam-17055427	0x011DAE60	MainLoop_CountTicks		likely	edf6-all-forces docs/frame-pacing-re.md: QPC 计时，周期 freq*100/5994；只由 0x011A2F4F 与 0x011A2F6B 调用，返回过去的 tick 数	
 steam-17055427	0x011DFD50	CustomCharRigidBody_PostCollide		likely	edf6-all-forces docs/havok-mt-re.md: world signal 订阅者，+0x860	
 steam-17055427	0x011DFF70	CustomCharRigidBody_PostSolve		likely	edf6-all-forces docs/havok-mt-re.md: world signal 订阅者，+0x870	
 steam-17055427	0x011DFF90	CustomCharRigidBody_PreCollide		likely	edf6-all-forces docs/havok-mt-re.md: world signal 订阅者，+0x858，0x011DDD20 订阅	
