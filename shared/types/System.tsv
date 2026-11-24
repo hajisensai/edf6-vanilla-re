@@ -1,2 +1,5 @@
 build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x0428	8	record_sync_list	Object**	likely	edf6-all-forces docs/unlimited-fps-re.md §4.3.2: System_RecordDraw 0x01197939 读，0x01197950 循环对每项调 vtable 第 3 槽	M001 实机约 70 项，含全部士兵
+steam-17055427	0x0438	8	record_sync_count	uint64	likely	edf6-all-forces docs/unlimited-fps-re.md §4.3.2: 0x01197940 读作 +0x428 表的项数	
+steam-17055427	0x0CE0	4	tick_count	uint32	likely	edf6-all-forces docs/unlimited-fps-re.md §4.3.2 / §4.3.3: 每个定步长 tick 加一（0x01198FD0）；插件按它的变化判断有没有新 tick	
 steam-17055427	0x0CE4	4	time_accum	float	likely	edf6-all-forces docs/frame-pacing-re.md: 未暂停时 += n*(1/60)	
