@@ -142,16 +142,21 @@ steam-17055427	0x00E82390	hknpMultithreadedSimulation::BuildSolveTasks		likely	e
 steam-17055427	0x010AB600	BVM_ExecuteInstruction		likely	reverse engineered: edf6-all-forces docs/edf5-online-re.md, dispatch table 0x010AC49C	migrated from function-labels.tsv
 steam-17055427	0x0111B420	Renderer_InitDevice		likely	edf6-all-forces docs/frame-pacing-re.md: 唯一调用者 0x011A33DF，经 0x012DAED0 建 D3D11 设备，设备存 renderer+0x80	
 steam-17055427	0x0111CC20	Renderer_WaitGpuFence		likely	edf6-all-forces docs/frame-pacing-re.md: 建事件、录一条 signal 命令，再用 0x00050E00 轮询 + Sleep(0) 忙等	超过 1 s 时顺带处理窗口消息
-steam-17055427	0x0111D890	Renderer_QueuePresent		likely	edf6-all-forces docs/unlimited-fps-re.md: 唯一调用者 0x011A309B，dl = SyncInterval；渲染线程 0x01118B45 调 Present(dl, 0)	
 steam-17055427	0x01182A00	ActionSource_Set		likely	edf6-all-forces docs/unlimited-fps-re.md: 写动作源 +0x48 值 / +0x4C 按住；0x01188738 / 0x01188756 写鼠标 X / Y	
 steam-17055427	0x01182BC0	ActionWrapper_Update		likely	edf6-all-forces docs/unlimited-fps-re.md: 清 +0x11/+0x12/+0x13 边沿后按源的变化重设，长按重复倒数减 n；全 EDF.dll 154 处调用	
 steam-17055427	0x011831F0	Input_TakeMouseDelta		likely	edf6-all-forces docs/unlimited-fps-re.md: 0x01188479 调用，dl=1 时拷出 0x01FEEE20 的 16 字节并重置为 0x01765B30	
 steam-17055427	0x011832D0	Input_TakeWheel		likely	edf6-all-forces docs/unlimited-fps-re.md: 0x01188480 调用，cl=1 时返回并清零 0x021360C0	
+steam-17055427	0x010FF4E0	Render_DrawMesh		likely	edf6-all-forces docs/perf-probe-re.md: call sites 0x01103FD1, 0x006C30CB; counted live once per mesh (M001 ~180 a frame)	5 个参数
+steam-17055427	0x01118AF0	RenderThread_ExecutePresent		likely	edf6-all-forces docs/perf-probe-re.md: call [vtable+0x40] (IDXGISwapChain::Present) at 0x01118B45 on [0x02136FF0+0x90]	渲染线程执行 Present 命令
+steam-17055427	0x0111B8E0	RenderThread_Main		likely	edf6-all-forces docs/frame-pacing-re.md: render thread entry; on every render thread stack (perf-probe-re.md)	
+steam-17055427	0x01182A10	Input_SampleFrame		likely	edf6-all-forces docs/perf-probe-re.md: main loop 0x011A2FF3, once a frame after the tick wait, before Application_Update (0x00705530)	帧锚点
 steam-17055427	0x0118A1B0	GameObject_Destroy		likely	edf6-all-forces docs/aircraft-re.md: 幂等；注销 0x020B2958 中的 shared_ptr	名字按功能概括
 steam-17055427	0x0118AFC0	SceneCamera_ctor		likely	edf6-all-forces docs/zoom-re.md: +0x20=+0x24=π/4	
 steam-17055427	0x0118DFF0	SceneCamera_BuildProjection		likely	edf6-all-forces docs/zoom-re.md: 读 cam+0x24 写 cam+0x1A0	
 steam-17055427	0x011945E0	Scene_CreateObject		confirmed	edf6-all-forces docs/airstrike-re.md: CreateObject(g,xf,sgo,InitParam)，多处调用点核对；decoy-blast-re.md 同	
+steam-17055427	0x011978D0	System_RecordDraw		likely	edf6-all-forces docs/perf-probe-re.md: System_Update calls it once at 0x01198FA4 before the step loop	每帧一次，与步数 n 无关
 steam-17055427	0x01198DA0	System_Update		likely	edf6-all-forces docs/frame-pacing-re.md: 0x00705715 调用，[System+0xCE4]+=n/60	
+steam-17055427	0x011A2E90	MainLoop_Run		likely	edf6-all-forces docs/perf-probe-re.md: .pdata starts here, called from 0x00703417; the per-frame loop runs in its chained fragments 0x011A2ECA..0x011A3116, one pass a frame: tick wait, steps clamped to 3 at 0x011A2F76, input, update, fence, present	
 steam-17055427	0x011A7EE0	Havok_CastRay		likely	edf6-all-forces docs/raycast-re.md: GetGroundPosition 在 0x002088AA 调用	
 steam-17055427	0x011AD220	Havok_World_GetBodyShared		likely	edf6-all-forces docs/gravity-re.md: 同 GetBody 并 lock weak，失败抛 bad_weak_ptr	
 steam-17055427	0x011AD2E0	Havok_World_GetBody		likely	edf6-all-forces docs/gravity-re.md: 先调 isBodyValid 再取属性 key 0x8001；bullet-pass-re.md 同	返回裸指针
@@ -173,6 +178,7 @@ steam-17055427	0x011DAE60	MainLoop_CountTicks		likely	edf6-all-forces docs/frame
 steam-17055427	0x011DFD50	CustomCharRigidBody_PostCollide		likely	edf6-all-forces docs/havok-mt-re.md: world signal 订阅者，+0x860	
 steam-17055427	0x011DFF70	CustomCharRigidBody_PostSolve		likely	edf6-all-forces docs/havok-mt-re.md: world signal 订阅者，+0x870	
 steam-17055427	0x011DFF90	CustomCharRigidBody_PreCollide		likely	edf6-all-forces docs/havok-mt-re.md: world signal 订阅者，+0x858，0x011DDD20 订阅	
+steam-17055427	0x011E1630	Render_SubmitDraw		likely	edf6-all-forces docs/perf-probe-re.md: (system, object, pass in r8d); call sites 0x011E255C 0x011E25F9 0x011E3A3F 0x011E4029 0x011E40BC	M001 每帧 pass0..3 约 28/28/12/232 次
 steam-17055427	0x011E7E20	asCContext::ExecuteNext		confirmed	upstream source match: AngelScript 2.28.2 as_context.cpp, dispatch 0x011E7E93, caller 0x011E59B3	migrated from function-labels.tsv
 steam-17055427	0x011FD0D0	asGetLibraryVersion		confirmed	upstream source match: AngelScript 2.28.2, returns version string at 0x01AEBC00	migrated from function-labels.tsv
 steam-17055427	0x0130FE20	hknpThreadPool::ProcessTaskQueue		likely	edf6-all-forces docs/havok-mt-re.md: pool vtable 第 4 槽，worker 主循环	
