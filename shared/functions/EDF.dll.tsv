@@ -140,16 +140,17 @@ steam-17055427	0x00E4D160	hknpWorld::castRay		confirmed	edf6-all-forces docs/ray
 steam-17055427	0x00E7E570	hknpMultithreadedSimulation::BuildCollideTasks		likely	edf6-all-forces docs/havok-mt-re.md: collide 任务由此构建	
 steam-17055427	0x00E82390	hknpMultithreadedSimulation::BuildSolveTasks		likely	edf6-all-forces docs/havok-mt-re.md: solve 任务由此构建	
 steam-17055427	0x010AB600	BVM_ExecuteInstruction		likely	reverse engineered: edf6-all-forces docs/edf5-online-re.md, dispatch table 0x010AC49C	migrated from function-labels.tsv
+steam-17055427	0x010FF4E0	Render_DrawMesh		likely	edf6-all-forces docs/perf-probe-re.md: call sites 0x01103FD1, 0x006C30CB; counted live once per mesh (M001 ~180 a frame)	5 个参数
+steam-17055427	0x01118AF0	RenderThread_ExecutePresent		likely	edf6-all-forces docs/perf-probe-re.md: call [vtable+0x40] (IDXGISwapChain::Present) at 0x01118B45 on [0x02136FF0+0x90]	渲染线程执行 Present 命令
 steam-17055427	0x0111B420	Renderer_InitDevice		likely	edf6-all-forces docs/frame-pacing-re.md: 唯一调用者 0x011A33DF，经 0x012DAED0 建 D3D11 设备，设备存 renderer+0x80	
+steam-17055427	0x0111B8E0	RenderThread_Main		likely	edf6-all-forces docs/frame-pacing-re.md: render thread entry; on every render thread stack (perf-probe-re.md)	
 steam-17055427	0x0111CC20	Renderer_WaitGpuFence		likely	edf6-all-forces docs/frame-pacing-re.md: 建事件、录一条 signal 命令，再用 0x00050E00 轮询 + Sleep(0) 忙等	超过 1 s 时顺带处理窗口消息
+steam-17055427	0x0111D890	Renderer_QueuePresent		likely	edf6-all-forces docs/unlimited-fps-re.md: 唯一调用者 0x011A309B，dl = SyncInterval；渲染线程 0x01118B45 调 Present(dl, 0)	
 steam-17055427	0x01182A00	ActionSource_Set		likely	edf6-all-forces docs/unlimited-fps-re.md: 写动作源 +0x48 值 / +0x4C 按住；0x01188738 / 0x01188756 写鼠标 X / Y	
+steam-17055427	0x01182A10	Input_SampleFrame		likely	edf6-all-forces docs/perf-probe-re.md: main loop 0x011A2FF3, once a frame after the tick wait, before Application_Update (0x00705530)	帧锚点
 steam-17055427	0x01182BC0	ActionWrapper_Update		likely	edf6-all-forces docs/unlimited-fps-re.md: 清 +0x11/+0x12/+0x13 边沿后按源的变化重设，长按重复倒数减 n；全 EDF.dll 154 处调用	
 steam-17055427	0x011831F0	Input_TakeMouseDelta		likely	edf6-all-forces docs/unlimited-fps-re.md: 0x01188479 调用，dl=1 时拷出 0x01FEEE20 的 16 字节并重置为 0x01765B30	
 steam-17055427	0x011832D0	Input_TakeWheel		likely	edf6-all-forces docs/unlimited-fps-re.md: 0x01188480 调用，cl=1 时返回并清零 0x021360C0	
-steam-17055427	0x010FF4E0	Render_DrawMesh		likely	edf6-all-forces docs/perf-probe-re.md: call sites 0x01103FD1, 0x006C30CB; counted live once per mesh (M001 ~180 a frame)	5 个参数
-steam-17055427	0x01118AF0	RenderThread_ExecutePresent		likely	edf6-all-forces docs/perf-probe-re.md: call [vtable+0x40] (IDXGISwapChain::Present) at 0x01118B45 on [0x02136FF0+0x90]	渲染线程执行 Present 命令
-steam-17055427	0x0111B8E0	RenderThread_Main		likely	edf6-all-forces docs/frame-pacing-re.md: render thread entry; on every render thread stack (perf-probe-re.md)	
-steam-17055427	0x01182A10	Input_SampleFrame		likely	edf6-all-forces docs/perf-probe-re.md: main loop 0x011A2FF3, once a frame after the tick wait, before Application_Update (0x00705530)	帧锚点
 steam-17055427	0x0118A1B0	GameObject_Destroy		likely	edf6-all-forces docs/aircraft-re.md: 幂等；注销 0x020B2958 中的 shared_ptr	名字按功能概括
 steam-17055427	0x0118AFC0	SceneCamera_ctor		likely	edf6-all-forces docs/zoom-re.md: +0x20=+0x24=π/4	
 steam-17055427	0x0118DFF0	SceneCamera_BuildProjection		likely	edf6-all-forces docs/zoom-re.md: 读 cam+0x24 写 cam+0x1A0	
