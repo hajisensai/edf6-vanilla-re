@@ -1,9 +1,22 @@
 build	rva	name	signature	confidence	evidence	notes
+steam-17055427	0x0003E5A0	Thread_Start		likely	edf6-all-forces docs/sync-load-re.md: CreateThread with CREATE_SUSPENDED then ResumeThread (import refs); handle at +8, id at +0x10	
+steam-17055427	0x0003E640	Thread_PollDone		likely	edf6-all-forces docs/sync-load-re.md: WaitForSingleObject(handle at +8, 0) (import ref)	
+steam-17055427	0x0003E690	Thread_Join		likely	edf6-all-forces docs/sync-load-re.md: WaitForSingleObject(handle at +8, INFINITE) then CloseHandle, handle reset to -1 (import refs)	
+steam-17055427	0x0003E700	Thread_SetName		confirmed	RaiseException 0x406D1388 with a THREADNAME_INFO (MSVC thread naming convention)	
+steam-17055427	0x00042C90	FileReader_Create		likely	edf6-all-forces docs/sync-load-re.md: stores vtables 0x0175F278 / 0x0175F290 (RTTI sgs::fs::detail::FileReader); written to 0x02005540 at 0x00074C3E	returns the object +0x18
+steam-17055427	0x00042D10	sgs::fs::detail::FileReader::Wait_Slot2		likely	edf6-all-forces docs/sync-load-re.md: vtable 0x0175F290 slot 2; arg 0 joins the read thread (0x0003E690), else polls (0x0003E640)	
+steam-17055427	0x00042D80	sgs::fs::detail::FileReader::Open_Slot1		likely	edf6-all-forces docs/sync-load-re.md: vtable 0x0175F290 slot 1; copies the path, starts the read thread (0x0003E5A0)	
 steam-17055427	0x00050BC0	ScopedLock_EnterCriticalSection		likely	edf6-all-forces docs/havok-mt-re.md: EnterCriticalSection 的 scoped lock	名字按功能概括
 steam-17055427	0x00050D10	Event_CreateAutoReset		likely	edf6-all-forces docs/frame-pacing-re.md: 内调 CreateEventW，0x0111CC20 每次栅栏新建一个	
 steam-17055427	0x00050E00	Event_PollSignaled		likely	edf6-all-forces docs/frame-pacing-re.md: WaitForSingleObject(h, 0) 的包装，0x0111CCCC 与 0x0111CD49 调用	
+steam-17055427	0x00073970	CpkContentFileReader_Create		likely	edf6-all-forces docs/sync-load-re.md: stores vtables 0x0175F1F8 / 0x0175F210 (RTTI sgs::fs::CpkContentFileReader); written to 0x02005540 at 0x00073EC1	returns the object +0x18
+steam-17055427	0x00074970	sgs::fs::CpkContentFileReader::Open_Slot1		likely	edf6-all-forces docs/sync-load-re.md: vtable 0x0175F210 slot 1; copies the path, starts the read thread (0x0003E5A0)	
+steam-17055427	0x00074BB0	sgs::fs::CpkContentFileReader::Wait_Slot2		likely	edf6-all-forces docs/sync-load-re.md: vtable 0x0175F210 slot 2; arg 0 joins the read thread (0x0003E690), else polls (0x0003E640)	
 steam-17055427	0x00077320	InputManager_UpdateActionWrappers		likely	edf6-all-forces docs/unlimited-fps-re.md: 唯一每帧调用 0x007058C7，rcx+=0x5AE8 后跳到 0x0007CDC0	参数 edx = 本帧 tick 数 n
 steam-17055427	0x0007CDC0	ActionWrapperTable_Update		likely	edf6-all-forces docs/unlimited-fps-re.md: 4 名玩家各 146 个封装，逐个调 0x01182BC0	
+steam-17055427	0x00084E80	ResourceCache_GetOrLoad		likely	edf6-all-forces docs/sync-load-re.md: rcx = 0x020B28D0 at CreateObject 0x011946DF; a miss calls the reader factory 0x02005540, Open (slot 1) and Wait(0) (slot 2) in the calling thread; live: plugin probe on 0x00084ECF / 0x00084FDA / 0x0008515D	key = {wstring path, uint hash at +0x20}; out = {entry, cache}
+steam-17055427	0x00089360	ResourceCache_InsertLoaded		guess	edf6-all-forces docs/sync-load-re.md: tree find-or-insert by (hash at +0x20, path) on the cache object, 0x78-byte node; called once at 0x00084FDA under the lock at cache+0x28	
+steam-17055427	0x0009C950	ResourceCache_Find		likely	edf6-all-forces docs/sync-load-re.md: looks the key up in the pending tree (cache+0x10, lock cache+0x50) and waits on a pending entry lock (0x0009C9F4), then in the loaded tree (lock cache+0x28)	
 steam-17055427	0x000AB2C0	DevCmd_set_armor_count		likely	edf6-all-forces docs/loadout-re.md: 开发者命令处理函数	
 steam-17055427	0x000AC650	DevCmd_set_player_soldier		likely	edf6-all-forces docs/loadout-re.md: 开发者命令处理函数	
 steam-17055427	0x000AC9E0	DevCmd_set_weapon		likely	edf6-all-forces docs/loadout-re.md: 开发者命令处理函数	
