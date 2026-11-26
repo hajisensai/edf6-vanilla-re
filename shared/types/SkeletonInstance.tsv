@@ -1,0 +1,4 @@
+build	offset	size	name	type	confidence	evidence	notes
+steam-17055427	0x0010	8	bone_records	void*	likely	edf6-all-forces docs/unlimited-fps-re.md: 0x01100F10 逐条读；每条 0x110 字节，+0 名字，+0xB0 世界矩阵	
+steam-17055427	0x0020	8	bone_count	u64	likely	edf6-all-forces docs/unlimited-fps-re.md: 0x01100F10 的循环界限	
+steam-17055427	0x0030	8	pose	float*	likely	edf6-all-forces docs/unlimited-fps-re.md: 0x01100F10 写入，调色板 0x011009A0 读；每骨一个 4x4 行向量世界矩阵（0x40 字节），平移在第 4 行	渲染线程读

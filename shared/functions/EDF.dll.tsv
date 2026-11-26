@@ -2,6 +2,7 @@ build	rva	name	signature	confidence	evidence	notes
 steam-17055427	0x00050BC0	ScopedLock_EnterCriticalSection		likely	edf6-all-forces docs/havok-mt-re.md: EnterCriticalSection 的 scoped lock	名字按功能概括
 steam-17055427	0x00050D10	Event_CreateAutoReset		likely	edf6-all-forces docs/frame-pacing-re.md: 内调 CreateEventW，0x0111CC20 每次栅栏新建一个	
 steam-17055427	0x00050E00	Event_PollSignaled		likely	edf6-all-forces docs/frame-pacing-re.md: WaitForSingleObject(h, 0) 的包装，0x0111CCCC 与 0x0111CD49 调用	
+steam-17055427	0x00077200	Input_StopRumbleAndRepoll		likely	edf6-all-forces docs/unlimited-fps-re.md §4.2: 停所有手柄震动并重新枚举输入设备；0x0070596F 在 Application+0x6C 倒数到 0 时调	
 steam-17055427	0x00077320	InputManager_UpdateActionWrappers		likely	edf6-all-forces docs/unlimited-fps-re.md: 唯一每帧调用 0x007058C7，rcx+=0x5AE8 后跳到 0x0007CDC0	参数 edx = 本帧 tick 数 n
 steam-17055427	0x0007CDC0	ActionWrapperTable_Update		likely	edf6-all-forces docs/unlimited-fps-re.md: 4 名玩家各 146 个封装，逐个调 0x01182BC0	
 steam-17055427	0x000AB2C0	DevCmd_set_armor_count		likely	edf6-all-forces docs/loadout-re.md: 开发者命令处理函数	
@@ -113,6 +114,7 @@ steam-17055427	0x00696310	Weapon_ToggleZoom		likely	edf6-all-forces docs/zoom-re
 steam-17055427	0x00698570	Weapon_SecondaryFireDispatch		likely	edf6-all-forces docs/zoom-re.md: 按 +0x690 跳表分派	
 steam-17055427	0x006A8B50	Weapon_RadioContact::UpdateCall		likely	reverse engineered: edf6-all-forces docs/airstrike-re.md, calls at 0x006A8DFB and 0x006A8EC8	migrated from function-labels.tsv
 steam-17055427	0x006C06A0	AnimationModel_SyncDrawPose		likely	edf6-all-forces docs/unlimited-fps-re.md §4.3.2；docs/fp-render-re.md §2：[this+0x31C] & 1 时依次调 0x011005E0、0x01100F10(this+0xA0)、0x011B30C0(this, this+0x110)	载具的第 3 槽经 0x00630220 也到这里
+steam-17055427	0x00704E60	Application_ArmInputRepoll		guess	edf6-all-forces docs/unlimited-fps-re.md §4.2: 把 Application+0x6C 置 8	
 steam-17055427	0x00705530	Application_Update		likely	edf6-all-forces docs/unlimited-fps-re.md: 主循环每帧调一次，[r14] = dt、[r14+4] = tick 数 n；内调 System_Update 0x01198DA0	每帧推进共享随机数 0x01F54128
 steam-17055427	0x00705A60	Application_OnWorldStepBegin		likely	edf6-all-forces docs/mission-cycle-re.md: 只经 Application vtable 槽 0x017E91E0 调用	
 steam-17055427	0x0070E330	Script_FreeResourceGroup		confirmed	edf6-all-forces docs/mission-cycle-re.md: 声明字符串 0x017EAD70，0x0071D094 取地址注册	
@@ -128,6 +130,7 @@ steam-17055427	0x007834F0	NetRegister_MissionScriptSpawn		likely	edf6-all-forces
 steam-17055427	0x00784210	Net_IsHost		likely	edf6-all-forces docs/online-re.md: 不在房间返回 1，否则比较房主 0x00734F00	
 steam-17055427	0x0078E9A0	MissionSync_PackEquipment		likely	edf6-all-forces docs/loadout-re.md: 打包本机装备记录	
 steam-17055427	0x007A3780	ResourceMgr_Preload		likely	edf6-all-forces docs/decoy-blast-re.md: Preload(*(img+0x020B29A8),path,2,-1)，调用点 0x0059DF21	
+steam-17055427	0x007B3010	Sound_SmoothVolume	void(void* sound, float dt)	likely	edf6-all-forces docs/unlimited-fps-re.md §4.2: +0x3C 每次逼近目标 0.1、+0xD8 每次加 0.01，经 0x007AED10 写音量；+0x30/+0x34 按 dt 倒数	按调用次数推进；唯一调用点 0x00705946
 steam-17055427	0x007DB520	UiSoldierSelect_WriteSoldier		likely	edf6-all-forces docs/loadout-re.md: 写兵种/外观	
 steam-17055427	0x007DD680	UiWeaponSelect_WriteSelected		likely	edf6-all-forces docs/loadout-re.md: 写入选中武器	
 steam-17055427	0x00820250	HUiHudDamage::Notify_Slot21		likely	edf6-all-forces docs/vehiclefps-0.1.66-re.md: HUiHudDamage 通知槽	
@@ -143,8 +146,10 @@ steam-17055427	0x00E7E570	hknpMultithreadedSimulation::BuildCollideTasks		likely
 steam-17055427	0x00E82390	hknpMultithreadedSimulation::BuildSolveTasks		likely	edf6-all-forces docs/havok-mt-re.md: solve 任务由此构建	
 steam-17055427	0x010AB600	BVM_ExecuteInstruction		likely	reverse engineered: edf6-all-forces docs/edf5-online-re.md, dispatch table 0x010AC49C	migrated from function-labels.tsv
 steam-17055427	0x010FF4E0	Render_DrawMesh		likely	edf6-all-forces docs/perf-probe-re.md: call sites 0x01103FD1, 0x006C30CB; counted live once per mesh (M001 ~180 a frame)	5 个参数
+steam-17055427	0x01100B90	SkeletonInstance_SetWorld		likely	edf6-all-forces docs/unlimited-fps-re.md: 把世界矩阵写进骨骼记录 0 的 +0xB0，置脏 inst+0xB0，再调 0x01100010 沿层级求各骨世界矩阵	士兵在 0x006BA9A2 以 h+0x60 调用
 steam-17055427	0x01100F10	SkeletonInstance_CopyBoneWorldsToPose		likely	edf6-all-forces docs/unlimited-fps-re.md §4.3.2；docs/sazabi-re.md §2：对 [inst+0x20] 根骨，把骨骼记录（[inst+0x10]，步长 0x110）+0xB0 的 64 字节世界矩阵抄进画面姿态 [inst+0x30]（步长 0x40）	没有按骨的条件
 steam-17055427	0x01118AF0	RenderThread_ExecutePresent		likely	edf6-all-forces docs/perf-probe-re.md: call [vtable+0x40] (IDXGISwapChain::Present) at 0x01118B45 on [0x02136FF0+0x90]	渲染线程执行 Present 命令
+steam-17055427	0x0111B220	Renderer_CreateSwapChain		likely	edf6-all-forces docs/frame-pacing-re.md: 调用者 0x0111B77B（设备初始化）与 0x0111C8EC（改模式重建）；把 renderer+0xA8 的描述拷到栈上，0x0111B340 调 IDXGIFactory::CreateSwapChain	原版描述：SwapEffect DISCARD、1 个缓冲、ALLOW_MODE_SWITCH
 steam-17055427	0x0111B420	Renderer_InitDevice		likely	edf6-all-forces docs/frame-pacing-re.md: 唯一调用者 0x011A33DF，经 0x012DAED0 建 D3D11 设备，设备存 renderer+0x80	
 steam-17055427	0x0111B8E0	RenderThread_Main		likely	edf6-all-forces docs/frame-pacing-re.md: render thread entry; on every render thread stack (perf-probe-re.md)	
 steam-17055427	0x0111CC20	Renderer_WaitGpuFence		likely	edf6-all-forces docs/frame-pacing-re.md: 建事件、录一条 signal 命令，再用 0x00050E00 轮询 + Sleep(0) 忙等	超过 1 s 时顺带处理窗口消息
@@ -156,6 +161,7 @@ steam-17055427	0x011831F0	Input_TakeMouseDelta		likely	edf6-all-forces docs/unli
 steam-17055427	0x011832D0	Input_TakeWheel		likely	edf6-all-forces docs/unlimited-fps-re.md: 0x01188480 调用，cl=1 时返回并清零 0x021360C0	
 steam-17055427	0x0118A1B0	GameObject_Destroy		likely	edf6-all-forces docs/aircraft-re.md: 幂等；注销 0x020B2958 中的 shared_ptr	名字按功能概括
 steam-17055427	0x0118AFC0	SceneCamera_ctor		likely	edf6-all-forces docs/zoom-re.md: +0x20=+0x24=π/4	
+steam-17055427	0x0118DF40	Camera_Step		likely	edf6-all-forces docs/unlimited-fps-re.md: 只在 0x011995A6 调用，rcx = 镜头；是 System_Update 每个 tick 的视口循环里最后一个调用，排在各对象阶段之后	经镜头 vtable 槽 4 写 cam+0x220 世界矩阵与 cam+0x24 视野
 steam-17055427	0x0118DFF0	SceneCamera_BuildProjection		likely	edf6-all-forces docs/zoom-re.md: 读 cam+0x24 写 cam+0x1A0	
 steam-17055427	0x011945E0	Scene_CreateObject		confirmed	edf6-all-forces docs/airstrike-re.md: CreateObject(g,xf,sgo,InitParam)，多处调用点核对；decoy-blast-re.md 同	
 steam-17055427	0x011978D0	System_RecordDraw		likely	edf6-all-forces docs/perf-probe-re.md: System_Update calls it once at 0x01198FA4 before the step loop	每帧一次，与步数 n 无关
