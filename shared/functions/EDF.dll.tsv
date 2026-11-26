@@ -201,11 +201,17 @@ steam-17055427	0x011B18F0	Havok_Body_SetLinearVelocity		likely	edf6-all-forces d
 steam-17055427	0x011B1930	Havok_Body_SetMass		likely	edf6-all-forces docs/gravity-re.md: 写槽 31 [+0xF8] 0x00E4FF50	
 steam-17055427	0x011B1960	Havok_Body_SetMotionType		likely	edf6-all-forces docs/gravity-re.md: 写槽 27 [+0xD8] 0x00E507F0	
 steam-17055427	0x011B1A00	Havok_Body_SetPosition		likely	edf6-all-forces docs/aircraft-re.md: SetPosition(body, vec4*) 包装	
+steam-17055427	0x011B5A70	Render_ExecuteUmbraVisibility		likely	edf6-all-forces docs/umbra-reuse-re.md: 渲染线程命令执行器：拷视图块进延迟渲染系统后调 processVisibility(Camera, Commander)	不是可见性计算；采样里的「self」是等 Umbra worker
+steam-17055427	0x011B5B30	Render_ExecuteUmbraVisibility_Far		likely	edf6-all-forces docs/umbra-reuse-re.md: 同 0x011B5A70，供远景视图录制使用，调用前后保存 / 恢复一个全局标志	
+steam-17055427	0x011B6770	Render_RecordFarVisibility		likely	edf6-all-forces docs/umbra-reuse-re.md: 游戏线程录制远景视图的可见性命令，执行器为 0x011B5B30；调用点 0x01197F93	
+steam-17055427	0x011B6AA0	Render_RecordMainVisibility		likely	edf6-all-forces docs/umbra-reuse-re.md: 游戏线程录制主视图的可见性命令，执行器为 0x011B5A70；调用点 0x01198656	
+steam-17055427	0x011B6F90	Render_RecordShadowVisibility		likely	edf6-all-forces docs/umbra-reuse-re.md: 游戏线程录制阴影可见性命令，按级联循环 2 次，执行器为 0x011B5A70；调用点 0x01197EC0	
 steam-17055427	0x011DAE60	MainLoop_CountTicks		likely	edf6-all-forces docs/frame-pacing-re.md: QPC 计时，周期 freq*100/5994；只由 0x011A2F4F 与 0x011A2F6B 调用，返回过去的 tick 数	
 steam-17055427	0x011DFD50	CustomCharRigidBody_PostCollide		likely	edf6-all-forces docs/havok-mt-re.md: world signal 订阅者，+0x860	
 steam-17055427	0x011DFF70	CustomCharRigidBody_PostSolve		likely	edf6-all-forces docs/havok-mt-re.md: world signal 订阅者，+0x870	
 steam-17055427	0x011DFF90	CustomCharRigidBody_PreCollide		likely	edf6-all-forces docs/havok-mt-re.md: world signal 订阅者，+0x858，0x011DDD20 订阅	
 steam-17055427	0x011E1630	Render_SubmitDraw		likely	edf6-all-forces docs/perf-probe-re.md: (system, object, pass in r8d); call sites 0x011E255C 0x011E25F9 0x011E3A3F 0x011E4029 0x011E40BC	M001 每帧 pass0..3 约 28/28/12/232 次
+steam-17055427	0x011E2120	UmbraCommander_Command		likely	edf6-all-forces docs/umbra-reuse-re.md: vtable 0x01AE5288 槽 1，按命令号分发 Umbra 回调（收集可见实例、遮挡 pass、发 / 取遮挡查询、绘制）	可见实例在同一次 processVisibility 内画掉，不跨帧保留
 steam-17055427	0x011E7E20	asCContext::ExecuteNext		confirmed	upstream source match: AngelScript 2.28.2 as_context.cpp, dispatch 0x011E7E93, caller 0x011E59B3	migrated from function-labels.tsv
 steam-17055427	0x011FD0D0	asGetLibraryVersion		confirmed	upstream source match: AngelScript 2.28.2, returns version string at 0x01AEBC00	migrated from function-labels.tsv
 steam-17055427	0x0130FE20	hknpThreadPool::ProcessTaskQueue		likely	edf6-all-forces docs/havok-mt-re.md: pool vtable 第 4 槽，worker 主循环	

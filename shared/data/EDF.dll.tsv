@@ -22,6 +22,7 @@ steam-17055427	0x017E91E0	Application_vftable_OnWorldStepBegin_slot	code pointer
 steam-17055427	0x017FC970	HUiHudDamage::vftable	vtable	confirmed	edf6-all-forces docs/vehiclefps-0.1.66-re.md: 类名 HUiHudDamage	
 steam-17055427	0x018BC9C0	hknpWorld::vftable	vtable	confirmed	edf6-all-forces docs/raycast-re.md: RTTI .?AVhknpWorld@@	castRay=第 54 槽
 steam-17055427	0x018C1A28	hknpMultithreadedSimulation::vftable	vtable	confirmed	edf6-all-forces docs/havok-mt-re.md: world+0x4C8 模拟对象的 vtable	
+steam-17055427	0x01AE5288	UmbraCommander_vftable	vtable	likely	edf6-all-forces docs/umbra-reuse-re.md: 槽 1 为 0x011E2120 Umbra 回调分发	
 steam-17055427	0x01F54128	g_SharedRandomSeed	uint64_t	likely	edf6-all-forces docs/unlimited-fps-re.md: 0x00705570 每帧 seed = seed*0x5D588B656C078965 + 0x269EC3，全 EDF.dll 1191 处引用	
 steam-17055427	0x01FEEE20	g_MouseDeltaAccum	16 bytes	likely	edf6-all-forces docs/unlimited-fps-re.md: 窗口线程累加的鼠标位移，0x011831F0 取走	
 steam-17055427	0x02005540	g_FileReaderFactory	void*(*)()	likely	edf6-all-forces docs/sync-load-re.md: written at 0x00073EC1 (0x00073970) and 0x00074C3E (0x00042C90); called at 0x00085012 for a cache miss	CPK or loose-file reader
