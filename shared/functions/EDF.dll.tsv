@@ -159,8 +159,10 @@ steam-17055427	0x00E7E570	hknpMultithreadedSimulation::BuildCollideTasks		likely
 steam-17055427	0x00E82390	hknpMultithreadedSimulation::BuildSolveTasks		likely	edf6-all-forces docs/havok-mt-re.md: solve 任务由此构建	
 steam-17055427	0x010AB600	BVM_ExecuteInstruction		likely	reverse engineered: edf6-all-forces docs/edf5-online-re.md, dispatch table 0x010AC49C	migrated from function-labels.tsv
 steam-17055427	0x010FF4E0	Render_DrawMesh		likely	edf6-all-forces docs/perf-probe-re.md: call sites 0x01103FD1, 0x006C30CB; counted live once per mesh (M001 ~180 a frame)	5 个参数
+steam-17055427	0x011009A0	SkinPalette_Update		likely	edf6-all-forces docs/perf-probe-re.md: LOD 绘制 0x01104100 的 0x01104131 每 pass 调一次，实机计数 M001 每帧约 92 次；逐骨算矩阵后 UpdateSubresource 整块上传	另有调用点 0x006C2C8A、0x01102F2E
 steam-17055427	0x01100B90	SkeletonInstance_SetWorld		likely	edf6-all-forces docs/unlimited-fps-re.md: 把世界矩阵写进骨骼记录 0 的 +0xB0，置脏 inst+0xB0，再调 0x01100010 沿层级求各骨世界矩阵	士兵在 0x006BA9A2 以 h+0x60 调用
 steam-17055427	0x01100F10	SkeletonInstance_CopyBoneWorldsToPose		likely	edf6-all-forces docs/unlimited-fps-re.md §4.3.2；docs/sazabi-re.md §2：对 [inst+0x20] 根骨，把骨骼记录（[inst+0x10]，步长 0x110）+0xB0 的 64 字节世界矩阵抄进画面姿态 [inst+0x30]（步长 0x40）	没有按骨的条件
+steam-17055427	0x01104100	Model_DrawLod		guess	edf6-all-forces docs/perf-probe-re.md: 每 pass 一次，入口先调 0x011009A0	
 steam-17055427	0x01118AF0	RenderThread_ExecutePresent		likely	edf6-all-forces docs/perf-probe-re.md: call [vtable+0x40] (IDXGISwapChain::Present) at 0x01118B45 on [0x02136FF0+0x90]	渲染线程执行 Present 命令
 steam-17055427	0x0111B220	Renderer_CreateSwapChain		likely	edf6-all-forces docs/frame-pacing-re.md: 调用者 0x0111B77B（设备初始化）与 0x0111C8EC（改模式重建）；把 renderer+0xA8 的描述拷到栈上，0x0111B340 调 IDXGIFactory::CreateSwapChain	原版描述：SwapEffect DISCARD、1 个缓冲、ALLOW_MODE_SWITCH
 steam-17055427	0x0111B420	Renderer_InitDevice		likely	edf6-all-forces docs/frame-pacing-re.md: 唯一调用者 0x011A33DF，经 0x012DAED0 建 D3D11 设备，设备存 renderer+0x80	
@@ -205,3 +207,4 @@ steam-17055427	0x011E1630	Render_SubmitDraw		likely	edf6-all-forces docs/perf-pr
 steam-17055427	0x011E7E20	asCContext::ExecuteNext		confirmed	upstream source match: AngelScript 2.28.2 as_context.cpp, dispatch 0x011E7E93, caller 0x011E59B3	migrated from function-labels.tsv
 steam-17055427	0x011FD0D0	asGetLibraryVersion		confirmed	upstream source match: AngelScript 2.28.2, returns version string at 0x01AEBC00	migrated from function-labels.tsv
 steam-17055427	0x0130FE20	hknpThreadPool::ProcessTaskQueue		likely	edf6-all-forces docs/havok-mt-re.md: pool vtable 第 4 槽，worker 主循环	
+steam-17055427	0x01631790	Renderer_ReadOcclusionQuery		likely	edf6-all-forces docs/perf-probe-re.md: 唯一调用点 0x011E4244（Umbra Commander 结果循环）；取锁 renderer+0x29F0 后经 vt+0xE8 GetData（flags=0），al=已就绪；实机计数 M001 每帧约 11 次、从未未就绪	第 5 参数（栈字节）为等待标志，等待时最多重试 1 s
