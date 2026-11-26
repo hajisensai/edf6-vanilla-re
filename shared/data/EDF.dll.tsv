@@ -1,4 +1,6 @@
 build	rva	name	type	confidence	evidence	notes
+steam-17055427	0x0175F210	sgs::fs::CpkContentFileReader::vftable	vtable	confirmed	RTTI .?AV?$CpkContentFileReader@...@fs@sgs@@ complete-object locator 0x01C36F30, object offset 0x18	
+steam-17055427	0x0175F290	sgs::fs::detail::FileReader::vftable	vtable	confirmed	RTTI .?AV?$FileReader@...@detail@fs@sgs@@ complete-object locator 0x01D12D70, object offset 0x18	
 steam-17055427	0x01762068	InitParamBase::vftable	vtable	likely	edf6-all-forces docs/airstrike-re.md: InitParamBase{vt 0x01762068}	
 steam-17055427	0x01765A20	kPiOver4	float	likely	edf6-all-forces docs/zoom-re.md: 常量 π/4	
 steam-17055427	0x01765B30	kMouseDeltaCleared	float[4]	likely	edf6-all-forces docs/unlimited-fps-re.md: 0x011831F0 取走鼠标位移后写回的值 {0, 0, 0, 1.0}	
@@ -22,10 +24,12 @@ steam-17055427	0x018BC9C0	hknpWorld::vftable	vtable	confirmed	edf6-all-forces do
 steam-17055427	0x018C1A28	hknpMultithreadedSimulation::vftable	vtable	confirmed	edf6-all-forces docs/havok-mt-re.md: world+0x4C8 模拟对象的 vtable	
 steam-17055427	0x01F54128	g_SharedRandomSeed	uint64_t	likely	edf6-all-forces docs/unlimited-fps-re.md: 0x00705570 每帧 seed = seed*0x5D588B656C078965 + 0x269EC3，全 EDF.dll 1191 处引用	
 steam-17055427	0x01FEEE20	g_MouseDeltaAccum	16 bytes	likely	edf6-all-forces docs/unlimited-fps-re.md: 窗口线程累加的鼠标位移，0x011831F0 取走	
+steam-17055427	0x02005540	g_FileReaderFactory	void*(*)()	likely	edf6-all-forces docs/sync-load-re.md: written at 0x00073EC1 (0x00073970) and 0x00074C3E (0x00042C90); called at 0x00085012 for a cache miss	CPK or loose-file reader
 steam-17055427	0x020B2880	g_FileSystemManager	void*	likely	edf6-all-forces docs/havok-props-re.md: 应用初始化写入的全局之一	
 steam-17055427	0x020B2890	g_GameDataMgr	GameStatus*	confirmed	edf6-all-forces docs/loadout-re.md: 0x00595CA4 mov rax,[rip] 解析到此；mission-list-re.md 同	
 steam-17055427	0x020B28A0	g_InputManager	InputManager*	likely	edf6-all-forces docs/unlimited-fps-re.md: 0x007058C7 处作 rcx 传给 0x00077320，+0x5AE8 是动作封装表	
 steam-17055427	0x020B28A8	g_MissionMgr	MissionMgr*	confirmed	edf6-all-forces docs/mission-cycle-re.md: RTTI MissionMgr	
+steam-17055427	0x020B28D0	g_ResourceCache	ResourceCache	likely	edf6-all-forces docs/sync-load-re.md: rcx of 0x00084E80 at CreateObject 0x011946DF and the menu model jobs	object, not a pointer
 steam-17055427	0x020B2958	g_SceneManager	void*	likely	edf6-all-forces docs/airstrike-re.md: CreateObject 的第一参 g=*(img+0x020B2958)	名字按用途取
 steam-17055427	0x020B2978	g_TeamManager	void*	likely	edf6-all-forces docs/airstrike-re.md: SetTeam 登记到此	名字按用途取
 steam-17055427	0x020B2988	g_DropItemManager	DropItemManager*	confirmed	edf6-all-forces docs/itembox-re.md: 0x00701586 写入，0x007004F0 new 0xE60	
